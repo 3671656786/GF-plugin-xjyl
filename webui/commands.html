@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>星甲 · 指令一览</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.6 system-ui, "Microsoft YaHei", sans-serif; background: #0f1420; color: #dfe6f2; }
+  header { padding: 18px 20px 12px; border-bottom: 1px solid #232c3d; position: sticky; top: 0; background: #0f1420ee; backdrop-filter: blur(6px); }
+  h1 { margin: 0 0 4px; font-size: 18px; }
+  .sub { color: #8b98ad; font-size: 12px; }
+  .bar { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  input, button { font: inherit; border-radius: 8px; border: 1px solid #2c374b; background: #151c2b; color: #dfe6f2; padding: 8px 12px; }
+  input { flex: 1 1 260px; }
+  button { cursor: pointer; background: #1e2b41; }
+  button:hover { background: #26364f; }
+  main { padding: 16px 20px 60px; max-width: 1080px; margin: 0 auto; }
+  .group { margin: 18px 0; border: 1px solid #232c3d; border-radius: 12px; overflow: hidden; }
+  .group > h2 { margin: 0; padding: 10px 14px; font-size: 14px; background: #182234; color: #9fc4ff; }
+  .cmd { display: flex; gap: 12px; padding: 9px 14px; border-top: 1px solid #1c2433; }
+  .cmd:hover { background: #151d2b; }
+  .cmd code { color: #7ee0b8; white-space: nowrap; font-family: ui-monospace, Consolas, monospace; }
+  .cmd span { color: #b9c4d6; }
+  .hit { color: #ffd479; }
+  .empty { color: #8b98ad; padding: 24px 4px; }
+  .err { color: #ff8b8b; padding: 12px 0; }
+  .stat { color: #8b98ad; font-size: 12px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📜 星甲 · 指令一览</h1>
+  <div class="sub">与游戏内「星甲完整指令菜单」同一份数据（GET /commands）。搜索支持中文/英文/拼音首字母外的模糊包含匹配。</div>
+  <div class="bar">
+    <input id="q" placeholder="搜索指令或说明，例如：副本 / 药园 / 联盟" autocomplete="off" />
+    <button id="reload">刷新</button>
+  </div>
+  <div class="stat" id="stat"></div>
+</header>
+<main id="main"><div class="empty">加载中…</div></main>
+<script>
+(function () {
+  var MARK = "/api/Plugin/ext/";
+  var STORE = "xjyl-mk-api-base";
+  var AUTH_KEY = "xjyl-admin-auth";
+
+  function guessBase() {
+    var p = window.location.pathname || "";
+    var i = p.indexOf(MARK);
+    if (i >= 0) {
+      var seg = p.slice(i + MARK.length).split("/")[0];
+      if (seg) return MARK + seg;
+    }
+    // 直接访问 <apiBase>/commands-page 时，去掉末尾路径段
+    var m = p.match(/^(.*?)\/commands-page\/?$/);
+    if (m && m[1]) return m[1];
+    return "";
+  }
+  function base() {
+    try { var s = localStorage.getItem(STORE); if (s) return String(s).replace(/\/+$/, ""); } catch (e) {}
+    return guessBase().replace(/\/+$/, "");
+  }
+  function token() {
+    try {
+      var raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return "";
+      var o = JSON.parse(raw);
+      return o && o.token ? String(o.token) : "";
+    } catch (e) { return ""; }
+  }
+
+  var DATA = null;
+  var main = document.getElementById("main");
+  var stat = document.getElementById("stat");
+  var q = document.getElementById("q");
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function render() {
+    var kw = String(q.value || "").trim().toLowerCase();
+    if (!DATA) return;
+    var 分组 = DATA.分组 || [];
+    var html = [];
+    var 总 = 0, 命 = 0;
+    分组.forEach(function (g) {
+      var rows = (g.条 || []).filter(function (x) {
+        总 += 1;
+        if (!kw) return true;
+        var s = (String(x[0] || "") + " " + String(x[1] || "")).toLowerCase();
+        var ok = s.indexOf(kw) >= 0;
+        if (ok) 命 += 1;
+        return ok;
+      });
+      if (!rows.length) return;
+      html.push('<section class="group"><h2>' + esc(g.组) + " · " + rows.length + ' 条</h2>');
+      rows.forEach(function (x) {
+        html.push('<div class="cmd"><code>' + esc(x[0]) + '</code><span>' + esc(x[1]) + "</span></div>");
+      });
+      html.push("</section>");
+    });
+    if (!html.length) { main.innerHTML = '<div class="empty">没有命中的指令，换个关键词试试。</div>'; }
+    else main.innerHTML = html.join("");
+    stat.innerHTML = kw
+      ? "命中 <b class='hit'>" + 命 + "</b> 条 / 共 " + 总 + " 条"
+      : "共 " + 总 + " 条 · " + 分组.length + " 个分组";
+  }
+
+  function load() {
+    main.innerHTML = '<div class="empty">加载中…</div>';
+    var t = token();
+    var url = base() + "/commands";
+    fetch(url, { headers: t ? { Authorization: "Bearer " + t } : {} })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("未登录：请先在控制台「星甲 玩家数据后台」登录，或在地址栏带 ?token=… 后重试");
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (j) {
+        DATA = (j && j.data) || j;
+        if (!DATA || !DATA.分组) throw new Error("返回结构异常：缺少「分组」");
+        render();
+      })
+      .catch(function (e) {
+        main.innerHTML = '<div class="err">加载失败：' + esc(e && e.message ? e.message : e) +
+          '<br><br>排查：① 先在 <a href="' + esc(base() + "/gfmk/admin") + '" style="color:#9fc4ff">玩家数据后台</a> 登录；' +
+          '② 确认 base 地址正确（本页从 localStorage 的 ' + STORE + ' 读取）；③ 直接在后台地址后加 /commands-page 访问。</div>';
+      });
+  }
+
+  q.addEventListener("input", render);
+  document.getElementById("reload").addEventListener("click", load);
+  // 支持 ?token=xxx 直接带 token 打开
+  try {
+    var u = new URLSearchParams(window.location.search);
+    var tk = u.get("token");
+    if (tk) localStorage.setItem(AUTH_KEY, JSON.stringify({ token: tk, expiresAt: 0, savedAt: Date.now() }));
+  } catch (e) {}
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>星甲娱乐 玩家数据后台</title>
+<style>
+html,body{margin:0;padding:0;height:100%;background:linear-gradient(155deg,#e0f2fe,#ecfeff 42%,#e0f7f4)}
+body{font-family:"Manrope","PingFang SC","Microsoft YaHei",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+#app{height:100%}
+[hidden]{display:none!important}
+.xjyl-admin{--ink:#0b1220;--text:#0f172a;--heading:#1e293b;--muted:#64748b;--accent:#0f766e;--accent2:#0d9488;--soft:rgba(15,118,110,.12);--ok:#059669;--warn:#b45309;--fail:#dc2626;--card:rgba(255,255,255,.52);--mono:ui-monospace,Consolas,"Courier New",monospace;box-sizing:border-box;display:flex;height:100%;min-height:640px;overflow:hidden;color:var(--text);font-family:"Manrope","PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.5;background:radial-gradient(900px 520px at 6% -8%,rgba(45,212,191,.26),transparent 55%),radial-gradient(760px 460px at 98% 2%,rgba(56,189,248,.18),transparent 52%),radial-gradient(620px 420px at 72% 112%,rgba(165,243,252,.2),transparent 50%),linear-gradient(155deg,#e0f2fe,#ecfeff 42%,#e0f7f4)}
+.xjyl-admin *,.xjyl-admin *::before,.xjyl-admin *::after{box-sizing:border-box}
+.xjyl-admin ::-webkit-scrollbar{width:8px;height:8px}
+.xjyl-admin ::-webkit-scrollbar-thumb{background:rgba(100,116,139,.28);border-radius:99px}
+.xjyl-admin ::-webkit-scrollbar-track{background:transparent}
+.xjyl-admin button{font-family:inherit}
+.xjl-side{width:214px;flex:0 0 214px;display:flex;flex-direction:column;gap:2px;padding:16px 12px;overflow:auto;background:rgba(255,255,255,.34);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid rgba(255,255,255,.5)}
+.xjl-brand{display:flex;flex-direction:column;gap:2px;padding:4px 10px 16px}
+.xjl-brand .xjl-mark{font-size:1.3rem;font-weight:800;line-height:1.1;background:linear-gradient(120deg,#0f766e 10%,#0d9488,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xjl-brand small{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(71,85,105,.65)}
+.xjl-nav{display:flex;flex-direction:column;gap:3px}
+.xjl-nav-item{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:11px;border:1px solid transparent;background:transparent;color:rgba(51,65,85,.9);font-size:13px;font-weight:600;text-align:left;cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+.xjl-nav-item:hover{background:rgba(255,255,255,.55);color:#0f172a}
+.xjl-nav-item.active{background:rgba(20,184,166,.18);border-color:rgba(45,212,191,.45);color:#0f766e;box-shadow:0 4px 14px rgba(20,184,166,.14)}
+.xjl-side-foot{margin-top:auto;padding:10px 10px 2px;font-size:10.5px;line-height:1.5;color:rgba(100,116,139,.85);word-break:break-all}
+.xjl-main{flex:1;min-width:0;overflow:auto;padding:18px 20px 28px}
+.xjl-page-title{margin:0;font-size:1.32rem;font-weight:800;color:var(--heading);letter-spacing:-.01em}
+.xjl-page-sub{margin:3px 0 14px;font-size:12.5px;color:var(--muted)}
+.xjl-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;padding:10px;border-radius:14px;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(148,163,184,.14)}
+.xjl-field{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#334155;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.8);border-radius:10px;padding:4px 9px}
+.xjl-input,.xjl-select{border:1px solid rgba(148,163,184,.35);background:#fff;border-radius:9px;padding:7px 9px;font:inherit;font-size:13px;color:var(--text);outline:none;min-width:0;transition:border-color .15s,box-shadow .15s}
+.xjl-input:focus,.xjl-select:focus{border-color:#2dd4bf;box-shadow:0 0 0 3px rgba(45,212,191,.18)}
+.xjl-input::placeholder{color:#94a3b8}
+textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
+.xjl-btn{font:inherit;font-size:13px;font-weight:600;border-radius:10px;padding:8px 12px;cursor:pointer;border:1px solid rgba(148,163,184,.28);background:rgba(255,255,255,.72);color:#334155;transition:background .16s,border-color .16s,transform .12s,opacity .16s;white-space:nowrap}
+.xjl-btn:hover{background:#fff}
+.xjl-btn:active{transform:translateY(1px)}
+.xjl-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.xjl-btn.xjl-primary{background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(15,118,110,.26)}
+.xjl-btn.xjl-primary:hover{filter:brightness(1.06)}
+.xjl-btn.xjl-ghost{background:transparent;border-color:rgba(15,118,110,.35);color:#0f766e}
+.xjl-btn.xjl-ghost:hover{background:rgba(15,118,110,.09)}
+.xjl-btn.xjl-danger{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.3);color:#b91c1c}
+.xjl-btn.xjl-danger:hover{background:rgba(220,38,38,.18)}
+.xjl-btn.xjl-sm{padding:5px 9px;font-size:12px;border-radius:8px}
+.xjl-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:14px}
+.xjl-stat{display:flex;flex-direction:column;gap:3px;padding:14px 16px;border-radius:15px;background:rgba(255,255,255,.56);border:1px solid rgba(255,255,255,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 26px rgba(148,163,184,.16);transition:transform .2s,box-shadow .2s}
+.xjl-stat:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(148,163,184,.22)}
+.xjl-stat .xjl-stat-label{font-size:12.5px;font-weight:600;color:#475569}
+.xjl-stat .xjl-stat-value{font-size:1.45rem;font-weight:800;color:#0d9488;font-variant-numeric:tabular-nums;line-height:1.2}
+.xjl-stat .xjl-stat-hint{font-size:11.5px;color:#94a3b8}
+.xjl-card,.xjl-detail,.xjl-players>*{min-width:0}
+.xjl-card{padding:14px;border-radius:16px;background:rgba(255,255,255,.54);border:1px solid rgba(255,255,255,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 26px rgba(148,163,184,.16)}
+.xjl-main > section > .xjl-card + .xjl-card{margin-top:12px}
+.xjl-card h3{margin:0 0 10px;font-size:13.5px;font-weight:800;color:#1e293b;display:flex;align-items:center;gap:8px}
+.xjl-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;align-items:start}
+.xjl-chart{display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;padding:10px 8px 4px;border-radius:12px;background:rgba(15,23,42,.035);border:1px solid rgba(255,255,255,.5)}
+.xjl-chart-y{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;height:180px;font-size:11px;color:#94a3b8;font-variant-numeric:tabular-nums}
+.xjl-chart-plot{height:180px;border-left:1px solid rgba(15,23,42,.1);border-bottom:1px solid rgba(15,23,42,.1);overflow:hidden}
+.xjl-chart-plot svg{display:block;width:100%;height:180px}
+.xjl-chart-x{grid-column:2;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));font-size:10.5px;color:#94a3b8}
+.xjl-chart-x span{text-align:center}
+.xjl-players{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
+.xjl-table-wrap{overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.44)}
+.xjl-table{width:100%;border-collapse:collapse;font-size:13px}
+.xjl-table.min{min-width:660px}
+.xjl-table.wide{min-width:1180px}
+.xjl-table th{position:sticky;top:0;z-index:1;text-align:left;padding:9px 10px;font-size:11.5px;font-weight:700;color:#64748b;letter-spacing:.03em;background:rgba(255,255,255,.92);border-bottom:1px solid rgba(148,163,184,.22);white-space:nowrap}
+.xjl-table td{padding:8px 10px;border-bottom:1px solid rgba(148,163,184,.14);color:#1e293b;vertical-align:middle;white-space:nowrap}
+.xjl-table tbody tr:last-child td{border-bottom:0}
+.xjl-table tbody tr:hover{background:rgba(255,255,255,.6)}
+.xjl-table tbody tr.active{background:rgba(13,148,136,.1);box-shadow:inset 3px 0 #0d9488}
+.xjl-table td.xjl-num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12.5px}
+.xjl-table td.xjl-wrap{white-space:normal;min-width:240px;overflow-wrap:anywhere}
+.xjl-table tbody tr.clickable{cursor:pointer}
+.xjl-mono{font-family:var(--mono);font-size:11.5px;color:#64748b}
+.xjl-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(15,118,110,.12);color:#0f766e;white-space:nowrap}
+.xjl-badge.ok{background:rgba(5,150,105,.13);color:#047857}
+.xjl-badge.fail{background:rgba(220,38,38,.12);color:#b91c1c}
+.xjl-badge.warn{background:rgba(180,83,9,.13);color:#b45309}
+.xjl-badge.plain{background:rgba(100,116,139,.13);color:#475569}
+.xjl-detail{display:flex;flex-direction:column;gap:12px;min-width:0}
+.xjl-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.xjl-detail-name{font-size:1.05rem;font-weight:800;color:#1e293b;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.xjl-detail-sub{margin-top:3px;font-size:11.5px;color:#64748b;word-break:break-all}
+.xjl-attr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.xjl-attr{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.75);min-width:0}
+.xjl-attr .k{font-size:11px;color:#64748b;font-weight:600}
+.xjl-attr .v{font-size:14px;font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xjl-items{display:flex;flex-wrap:wrap;gap:6px;max-height:190px;overflow:auto;padding:2px}
+.xjl-item{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:8px;font-size:12px;background:rgba(255,255,255,.62);border:1px solid rgba(148,163,184,.22);color:#475569}
+.xjl-item b{font-family:var(--mono);font-weight:700;color:#0f766e}
+.xjl-item.zero{opacity:.42}
+.xjl-item.has{border-color:rgba(45,212,191,.5);background:rgba(204,251,241,.7)}
+.xjl-form-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.xjl-hint{font-size:11.5px;color:#94a3b8;margin-top:6px;line-height:1.5}
+.xjl-err{margin-top:10px;font-size:12.5px;font-weight:600;color:#b91c1c}
+.xjl-empty{padding:26px 16px;text-align:center;font-size:12.5px;color:#94a3b8;border:1px dashed rgba(148,163,184,.4);border-radius:12px;background:rgba(255,255,255,.26)}
+.xjl-loading{display:flex;align-items:center;gap:8px;padding:22px 12px;justify-content:center;font-size:12.5px;color:#64748b}
+.xjl-spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(13,148,136,.25);border-top-color:#0d9488;animation:xjl-spin .7s linear infinite}
+@keyframes xjl-spin{to{transform:rotate(360deg)}}
+.xjl-list{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow:auto}
+.xjl-log-row{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.7);border:1px solid rgba(148,163,184,.18)}
+.xjl-log-top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:11.5px;color:#94a3b8}
+.xjl-log-who{font-weight:700;color:#0f766e}
+.xjl-log-text{margin-top:2px;font-size:12.5px;color:#334155;overflow-wrap:anywhere}
+.xjl-owner-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:11px;background:rgba(255,255,255,.72);border:1px solid rgba(148,163,184,.2)}
+.xjl-owner-id{font-family:var(--mono);font-size:12.5px;color:#334155;word-break:break-all;min-width:0}
+.xjl-switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 13px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.7);margin-top:8px}
+.xjl-switch-row .k{font-size:13px;font-weight:700;color:#1e293b}
+.xjl-switch-row .d{margin-top:2px;font-size:11.5px;color:#94a3b8}
+.xjl-switch{position:relative;width:44px;height:25px;flex:0 0 auto;border-radius:999px;border:0;cursor:pointer;background:#cbd5e1;transition:background .2s}
+.xjl-switch.on{background:#0d9488}
+.xjl-switch::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(15,23,42,.2);transition:transform .2s}
+.xjl-switch.on::after{transform:translateX(19px)}
+.xjl-toast{position:fixed;left:50%;top:20px;z-index:90;transform:translate(-50%,-10px);max-width:min(88vw,340px);padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;text-align:center;background:rgba(11,18,32,.9);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(15,23,42,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.xjl-toast.show{opacity:1;transform:translate(-50%,0)}
+.xjl-seg{display:inline-flex;flex-wrap:wrap;border:1px solid rgba(255,255,255,.8);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.55)}
+.xjl-seg button{border:0;background:transparent;padding:7px 11px;font-size:12.5px;font-weight:600;color:#475569;cursor:pointer;transition:background .15s,color .15s}
+.xjl-seg button:hover{background:rgba(255,255,255,.7)}
+.xjl-seg button.active{background:rgba(13,148,136,.18);color:#0f766e}
+.xjl-kv{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#475569}
+.xjl-kv div{display:flex;gap:8px;justify-content:space-between;border-bottom:1px dashed rgba(148,163,184,.25);padding-bottom:5px;overflow-wrap:anywhere}
+.xjl-kv div:last-child{border-bottom:0}
+.xjl-kv b{font-weight:700;color:#1e293b;font-family:var(--mono);font-size:11.5px;text-align:right}
+.xjl-idgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:8px}
+.xjl-idrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.8);min-width:0}
+.xjl-idrow .k{flex:0 0 auto;font-size:11.5px;font-weight:700;color:#64748b}
+.xjl-idrow .v{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xjl-idrow .v.xjl-mono{font-family:var(--mono);font-size:11.5px;font-weight:600;color:#475569}
+.xjl-copy{flex:0 0 auto;border:1px solid rgba(15,118,110,.28);background:rgba(15,118,110,.08);color:#0f766e;border-radius:7px;padding:2px 7px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.xjl-copy:hover{background:rgba(15,118,110,.16)}
+.xjl-block{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(148,163,184,.32)}
+.xjl-block-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px;font-weight:800;color:#334155}
+.xjl-block-title .xjl-hint{margin:0;font-weight:600}
+.xjl-mult{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px;padding:16px 18px;border-radius:15px;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.72)}
+.xjl-mult-big{display:flex;align-items:baseline;gap:4px;font-size:2.9rem;font-weight:800;line-height:1;color:#0d9488;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.xjl-mult-big.off{color:#94a3b8}
+.xjl-mult-big small{font-size:.95rem;font-weight:700;color:#94a3b8;letter-spacing:0}
+.xjl-mult-slider{flex:1 1 260px;min-width:180px;display:flex;flex-direction:column;gap:6px}
+.xjl-slider{width:100%;height:6px;accent-color:#0d9488;cursor:pointer;margin:0}
+.xjl-mult-marks{display:flex;justify-content:space-between;font-size:10.5px;color:#94a3b8;font-variant-numeric:tabular-nums}
+.xjl-title-effects{display:flex;flex-wrap:wrap;gap:5px}
+.xjl-tfx{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:7px;background:rgba(15,118,110,.09);color:#0f766e;font-size:11.5px;font-weight:700;font-family:var(--mono)}
+.xjl-title-name{font-weight:800;color:#1e293b}
+.xjl-title-list{display:flex;flex-wrap:wrap;gap:6px}
+.xjl-entry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px}
+.xjl-entry{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:5px 9px;border-radius:9px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.75);min-width:0}
+.xjl-entry .k{font-size:11.5px;font-weight:600;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xjl-entry .v{font-size:13px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums;white-space:nowrap}
+.xjl-entry.pct .v{color:#0d9488}
+.xjl-entry.zero{opacity:.62}
+.xjl-entry .soon{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;background:rgba(100,116,139,.14);color:#94a3b8;font-size:10.5px;font-weight:700;white-space:nowrap}
+.xjl-auth-shell{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(900px 520px at 6% -8%,rgba(45,212,191,.26),transparent 55%),radial-gradient(760px 460px at 98% 2%,rgba(56,189,248,.18),transparent 52%),linear-gradient(155deg,#e0f2fe,#ecfeff 42%,#e0f7f4)}
+.xjl-auth-card{width:min(400px,100%);border-radius:18px;padding:24px;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.9);box-shadow:0 24px 60px rgba(15,23,42,.22);display:flex;flex-direction:column;gap:10px}
+.xjl-auth-brand{display:flex;flex-direction:column;gap:2px;margin-bottom:2px}
+.xjl-auth-brand .xjl-mark{font-size:1.45rem;font-weight:800;line-height:1.1;background:linear-gradient(120deg,#0f766e 10%,#0d9488,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.xjl-auth-brand small{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(71,85,105,.65)}
+.xjl-auth-card label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:#475569}
+.xjl-auth-card .xjl-hint{margin-top:0}
+.xjl-check{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.xjl-check span{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:rgba(220,38,38,.1);color:#b91c1c}
+.xjl-check span.ok{background:rgba(5,150,105,.13);color:#047857}
+.xjl-acct{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(148,163,184,.32);display:flex;flex-direction:column;gap:4px}
+.xjl-acct-title{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(100,116,139,.8);padding:0 12px 2px}
+@media (min-width:1180px){.xjl-players{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
+@media (max-width:860px){.xjyl-admin{flex-direction:column;height:auto;min-height:0;overflow:visible}.xjl-side{width:100%;flex:0 0 auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.55);position:sticky;top:0;z-index:20}.xjl-brand{padding:0 4px;flex:0 0 auto}.xjl-brand .xjl-mark{font-size:1.05rem}.xjl-brand small{display:none}.xjl-nav{flex-direction:row;flex:1;overflow-x:auto;gap:6px;padding-bottom:2px}.xjl-nav-item{padding:7px 11px;white-space:nowrap;flex:0 0 auto}.xjl-side-foot{display:none}.xjl-main{padding:12px 12px 24px;overflow:visible}.xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.xjl-page-title{font-size:1.15rem}.xjl-table.min,.xjl-table.wide{min-width:560px}.xjl-chart{grid-template-columns:34px minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="xjyl-admin">
+    <aside class="xjl-side">
+      <div class="xjl-brand"><span class="xjl-mark">星甲娱乐</span><small>player console</small></div>
+      <div class="xjl-nav" id="nav">
+        <button type="button" class="xjl-nav-item active" data-view="overview">概览</button>
+        <button type="button" class="xjl-nav-item" data-view="players">玩家管理</button>
+        <button type="button" class="xjl-nav-item" data-view="server">全服倍率</button>
+        <button type="button" class="xjl-nav-item" data-view="economy">玩法配置</button>
+        <button type="button" class="xjl-nav-item" data-view="activity">活跃统计</button>
+        <button type="button" class="xjl-nav-item" data-view="farm">农场总览</button>
+        <button type="button" class="xjl-nav-item" data-view="owners">主人管理</button>
+        <button type="button" class="xjl-nav-item" data-view="logs">日志与公告</button>
+        <button type="button" class="xjl-nav-item" data-view="manage">系统管理</button>
+        <button type="button" class="xjl-nav-item" data-view="commands">指令列表</button>
+        <button type="button" class="xjl-nav-item" data-view="settings">设置</button>
+      </div>
+      <div class="xjl-acct">
+        <div class="xjl-acct-title">账号</div>
+        <button type="button" class="xjl-nav-item" id="acctChangePwd">修改密码</button>
+        <button type="button" class="xjl-nav-item" id="acctLogout">退出登录</button>
+      </div>
+      <div class="xjl-side-foot" id="baseFoot"></div>
+    </aside>
+    <main class="xjl-main">
+      <section id="panel-overview">
+        <h1 class="xjl-page-title">概览</h1>
+        <p class="xjl-page-sub">玩家数据与今日活跃一览（静态兜底页）</p>
+        <div class="xjl-stats" id="ovStats"></div>
+        <div class="xjl-card">
+          <h3>今日消息时段分布</h3>
+          <div id="ovChart"></div>
+        </div>
+        <div class="xjl-grid2" style="margin-top:12px">
+          <div class="xjl-card">
+            <h3>今日数据</h3>
+            <div class="xjl-kv" id="ovToday"></div>
+          </div>
+          <div class="xjl-card">
+            <h3>运行信息</h3>
+            <div class="xjl-kv" id="ovMeta"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-players" hidden>
+        <h1 class="xjl-page-title">玩家管理</h1>
+        <p class="xjl-page-sub">搜索玩家后可修改属性、发放道具、管理编号称号与账号绑定、封禁或重置</p>
+        <div class="xjl-toolbar">
+          <label class="xjl-field" style="flex:1 1 220px;min-width:180px;max-width:420px">搜索
+            <input class="xjl-input" id="plQ" style="flex:1;min-width:0" placeholder="昵称 / 编号 / openid" />
+          </label>
+          <label class="xjl-field">排序
+            <select class="xjl-select" id="plSort">
+              <option value="战力">战力</option>
+              <option value="等级">等级</option>
+              <option value="星羽">星羽</option>
+              <option value="星核">星核</option>
+              <option value="存款">存款</option>
+              <option value="贡献">贡献</option>
+              <option value="经验">经验</option>
+              <option value="转生">转生</option>
+              <option value="强化">强化</option>
+            </select>
+          </label>
+          <span class="xjl-hint" id="plTotal" style="margin:0">—</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="plReload">刷新</button>
+        </div>
+        <div class="xjl-players">
+          <div class="xjl-card" style="padding:10px">
+            <div id="plTable"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+          </div>
+          <div class="xjl-card" id="plDetail">
+            <h3>玩家详情</h3>
+            <div class="xjl-empty">点击左侧任意玩家查看属性、背包与管理记录</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-server" hidden>
+        <h1 class="xjl-page-title">全服倍率</h1>
+        <p class="xjl-page-sub">统一调整全服结算奖励倍率，保存后于下一次结算生效</p>
+        <div class="xjl-toolbar">
+          <span class="xjl-hint" style="margin:0">范围 1.0（关闭）~ 2.0，步进 0.1</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="srvReload">刷新</button>
+        </div>
+        <div class="xjl-card">
+          <h3>当前倍率 <span class="xjl-badge plain" id="srvState">—</span></h3>
+          <div class="xjl-mult">
+            <div class="xjl-mult-big off" id="srvBig">×1.0<small>无加成</small></div>
+            <div class="xjl-mult-slider">
+              <input type="range" class="xjl-slider" id="srvRange" min="1" max="2" step="0.1" value="1" aria-label="全服倍率" />
+              <div class="xjl-mult-marks"><span>×1.0</span><span>×1.5</span><span>×2.0</span></div>
+            </div>
+            <label class="xjl-field">倍率
+              <input class="xjl-input" id="srvNum" type="number" step="0.1" min="1" max="2" style="width:88px" value="1.0" />
+            </label>
+          </div>
+          <div class="xjl-form-row">
+            <div class="xjl-seg" id="srvQuick">
+              <button type="button" data-quick="1">×1.0</button>
+              <button type="button" data-quick="1.2">×1.2</button>
+              <button type="button" data-quick="1.5">×1.5</button>
+              <button type="button" data-quick="2">×2.0</button>
+            </div>
+            <button type="button" class="xjl-btn xjl-primary" id="srvSave">保存倍率</button>
+          </div>
+          <p class="xjl-hint" id="srvNote">作用于所有玩家的副本 / BOSS / 天下楼结算奖励（经验、星羽、金币、星核、掉落数量）。</p>
+          <p class="xjl-hint" id="srvAt">上次生效时间：未记录</p>
+          <div class="xjl-err" id="srvErr" hidden></div>
+        </div>
+        <div class="xjl-stats" style="margin-top:12px" id="srvStats"></div>
+        <div class="xjl-card" style="padding:10px;margin-top:12px">
+          <h3 style="padding:4px 4px 0">称号一览 <span class="xjl-badge plain" id="ttCount">0 个</span></h3>
+          <p class="xjl-hint" style="margin:0 4px 8px">主人的「定制称号」在玩家详情「账号与身份」中自由填写；系统称号由系统自动发放（只读）。稀有度仅用于展示。</p>
+          <div id="ttTable"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+        </div>
+      </section>
+
+      <section id="panel-economy" hidden>
+        <h1 class="xjl-page-title">玩法配置</h1>
+        <p class="xjl-page-sub">全服倍率、赌场与农场参数（只读，具体上限由插件配置解锁）</p>
+        <div class="xjl-toolbar">
+          <span class="xjl-hint" style="margin:0">后端下发什么就展示什么，未下发的项自动隐藏</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="ecoReload">刷新</button>
+        </div>
+        <div class="xjl-grid2" id="ecoBody"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+      </section>
+
+      <section id="panel-activity" hidden>
+        <h1 class="xjl-page-title">活跃统计</h1>
+        <p class="xjl-page-sub">最近 24 小时全服活跃（后端未就绪时自动隐藏内容）</p>
+        <div class="xjl-toolbar">
+          <span class="xjl-hint" style="margin:0">仅统计最近 24 小时</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="actReload">刷新</button>
+        </div>
+        <div class="xjl-stats" id="actStats"></div>
+        <div class="xjl-card" id="actChartWrap" hidden>
+          <h3>24 小时消息分布</h3>
+          <div id="actChart"></div>
+        </div>
+        <div class="xjl-card" style="padding:10px;margin-top:12px" id="actListWrap" hidden>
+          <h3 style="padding:4px 4px 0">活跃用户 <span class="xjl-badge plain" id="actCount">0 条</span></h3>
+          <div id="actList"></div>
+        </div>
+      </section>
+
+      <section id="panel-farm" hidden>
+        <h1 class="xjl-page-title">农场总览</h1>
+        <p class="xjl-page-sub">农场数据 Top 20（后端未就绪时自动隐藏内容）</p>
+        <div class="xjl-toolbar">
+          <span class="xjl-hint" style="margin:0">仅展示前 20 名</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="fmReload">刷新</button>
+        </div>
+        <div class="xjl-card" style="padding:10px" id="fmBody"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+      </section>
+
+      <section id="panel-owners" hidden>
+        <h1 class="xjl-page-title">主人管理</h1>
+        <p class="xjl-page-sub">最高权限者与主人名单，可增删普通主人</p>
+        <div class="xjl-grid2">
+          <div class="xjl-card">
+            <h3>最高权限者</h3>
+            <div class="xjl-owner-row"><span class="xjl-owner-id" id="owHigh">—</span><span class="xjl-badge">不可移除</span></div>
+            <p class="xjl-hint">最高权限者由插件配置决定，网页端仅展示，不能在此增删。</p>
+          </div>
+          <div class="xjl-card">
+            <h3>主人列表 <span class="xjl-badge plain" id="owCount">0 位</span></h3>
+            <div class="xjl-form-row" style="margin-top:0;margin-bottom:10px">
+              <label class="xjl-field" style="flex:1 1 240px">openid
+                <input class="xjl-input" id="owInput" style="flex:1;min-width:0" placeholder="粘贴完整 openid" />
+              </label>
+              <button type="button" class="xjl-btn xjl-primary" id="owAdd">添加主人</button>
+            </div>
+            <div id="owList"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-logs" hidden>
+        <h1 class="xjl-page-title">日志与公告</h1>
+        <p class="xjl-page-sub">最近 50 条管理日志与全服公告</p>
+        <div class="xjl-grid2">
+          <div class="xjl-card" style="padding:10px">
+            <h3 style="padding:4px 4px 0">管理日志</h3>
+            <div id="lgTable"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+          </div>
+          <div class="xjl-card">
+            <h3>发布公告</h3>
+            <textarea class="xjl-input" id="lgText" rows="4" placeholder="输入要推送给全服玩家的公告内容"></textarea>
+            <div class="xjl-form-row">
+              <button type="button" class="xjl-btn xjl-primary" id="lgSend">发布公告</button>
+              <button type="button" class="xjl-btn" id="lgClear">清空</button>
+            </div>
+            <h3 style="margin-top:16px">历史公告</h3>
+            <div id="lgNotices"></div>
+            <div class="xjl-err" id="lgErr" hidden></div>
+          </div>
+        </div>
+        <div class="xjl-card">
+          <h3>常驻公告 <span class="xjl-badge plain" id="lgStickyCount">0/5 行</span></h3>
+          <p class="xjl-hint" style="margin:0 4px 8px">以灰色字显示在每条回复的「响应用时」下方。支持换行，最多 5 行（超出不保存），留空即关闭。</p>
+          <textarea class="xjl-input" id="lgSticky" rows="5" placeholder="例如：&#10;加群 123456789 领福利&#10;每晚 8 点开团本&#10;（留空 = 关闭常驻公告）"></textarea>
+          <div class="xjl-form-row">
+            <button type="button" class="xjl-btn xjl-primary" id="lgStickySave">保存常驻公告</button>
+            <button type="button" class="xjl-btn" id="lgStickyClear">清空（关闭）</button>
+            <span class="xjl-hint" id="lgStickyState" style="margin:0">当前已关闭（留空即关闭）</span>
+          </div>
+          <div class="xjl-err" id="lgStickyErr" hidden></div>
+        </div>
+      </section>
+
+      <section id="panel-settings" hidden>
+        <h1 class="xjl-page-title">设置</h1>
+        <p class="xjl-page-sub">图片渲染、调试开关与 sharp 运行环境</p>
+        <div class="xjl-grid2">
+          <div class="xjl-card">
+            <h3>插件配置</h3>
+            <div class="xjl-switch-row" style="margin-top:0">
+              <div><div class="k">图片渲染</div><div class="d">关闭后部分功能只返回纯文本</div></div>
+              <button type="button" class="xjl-switch" id="cfImg" aria-label="切换图片渲染"></button>
+            </div>
+            <div class="xjl-switch-row">
+              <div><div class="k">调试模式</div><div class="d">输出更详细的运行日志</div></div>
+              <button type="button" class="xjl-switch" id="cfDebug" aria-label="切换调试模式"></button>
+            </div>
+            <div class="xjl-switch-row" style="align-items:flex-start">
+              <div><div class="k">渲染模式</div><div class="d">控制消息内容的解析方式</div></div>
+              <select class="xjl-select" id="cfMode">
+                <option value="markdown">markdown</option>
+                <option value="text">text</option>
+                <option value="image">image</option>
+              </select>
+            </div>
+            <h3 style="margin-top:16px">备注</h3>
+            <textarea class="xjl-input" id="cfNote" rows="3" placeholder="给其他管理员的备注信息"></textarea>
+            <div class="xjl-form-row">
+              <button type="button" class="xjl-btn xjl-primary" id="cfSave">保存配置</button>
+              <button type="button" class="xjl-btn" id="cfReload">重新读取</button>
+            </div>
+            <div class="xjl-err" id="cfErr" hidden></div>
+          </div>
+          <div class="xjl-card">
+            <h3>sharp 运行环境</h3>
+            <div class="xjl-kv" id="cfSharp"></div>
+            <p class="xjl-hint" id="cfSharpHint"></p>
+            <h3 style="margin-top:16px">接口地址</h3>
+            <div class="xjl-form-row" style="margin-top:0">
+              <input class="xjl-input" id="baseInput" style="flex:1 1 220px" placeholder="/api/Plugin/ext/GF-plugin-xjyl" />
+              <button type="button" class="xjl-btn xjl-ghost" id="baseSave">保存并重载</button>
+            </div>
+            <p class="xjl-hint">留空表示使用同源根路径。地址会保存在本机 localStorage，仅影响当前浏览器。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-manage" hidden>
+        <h1 class="xjl-page-title">系统管理</h1>
+        <p class="xjl-page-sub">细分倍率 / 双倍活动 / 批量发奖励 / 世界资金 / 数据清理（所有操作写管理操作日志）</p>
+        <div class="xjl-grid2">
+          <div class="xjl-card">
+            <h3>细分倍率（实际 = 称号 × 全服倍率 × 细分，0.5~5）</h3>
+            <div class="xjl-kv" id="mgRates"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <button type="button" class="xjl-btn" id="mgRatesSave">保存倍率</button>
+              <button type="button" class="xjl-btn xjl-ghost" id="mgDouble">🎉 开启双倍活动（全部 ×2）</button>
+              <button type="button" class="xjl-btn xjl-ghost" id="mgRatesReload">刷新</button>
+            </div>
+          </div>
+          <div class="xjl-card">
+            <h3>批量发奖励</h3>
+            <div class="xjl-kv" style="gap:8px">
+              <label class="xjl-field">筛选
+                <select class="xjl-select" id="mgBulkFilter">
+                  <option value="全部">全部玩家</option>
+                  <option value="等级:10">等级 ≥ 10</option>
+                  <option value="等级:30">等级 ≥ 30</option>
+                  <option value="等级:50">等级 ≥ 50</option>
+                  <option value="信用:50">信用分 ≥ 50</option>
+                </select>
+              </label>
+              <label class="xjl-field">星羽
+                <input class="xjl-input" id="mgBulkCoin" type="number" min="0" placeholder="0 = 不发星羽" />
+              </label>
+              <label class="xjl-field">道具名
+                <input class="xjl-input" id="mgBulkItem" placeholder="留空 = 不发道具（如 幸运币）" />
+              </label>
+              <label class="xjl-field">道具数量
+                <input class="xjl-input" id="mgBulkCount" type="number" min="1" value="1" />
+              </label>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button type="button" class="xjl-btn" id="mgBulkSend">发放</button>
+              <span class="xjl-hint" id="mgBulkOut" style="margin:0"></span>
+            </div>
+          </div>
+          <div class="xjl-card">
+            <h3>世界资金（收入进账 / 支出扣账）</h3>
+            <div class="xjl-kv" id="mgFundNow">—</div>
+            <div style="display:flex;gap:8px;margin-top:10px;align-items:flex-end;flex-wrap:wrap">
+              <label class="xjl-field">金额
+                <input class="xjl-input" id="mgFundAmt" type="number" placeholder="正数增加 / 负数扣除" />
+              </label>
+              <button type="button" class="xjl-btn" id="mgFundSave">调整</button>
+              <button type="button" class="xjl-btn xjl-ghost" id="mgFundReload">刷新</button>
+            </div>
+          </div>
+          <div class="xjl-card">
+            <h3>股票价格上下限（仅管理员可见，玩家侧不显示）</h3>
+            <div id="mgStocks">—</div>
+            <span class="xjl-hint">波动 tick 与事件联动都会夹在 [下限,上限] 区间；留空 / 0 = 不设限。上下限只约束之后的涨跌，不直接改动现价。</span>
+          </div>
+          <div class="xjl-card">
+            <h3>数据清理</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+              <button type="button" class="xjl-btn xjl-ghost" id="mgCleanPvp">清理 PVP 残留</button>
+              <button type="button" class="xjl-btn xjl-ghost" id="mgCleanFund">清零旧基金档</button>
+              <button type="button" class="xjl-btn xjl-ghost" id="mgCleanSession">清空控制台会话</button>
+            </div>
+            <div class="xjl-kv" id="mgCleanOut" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-commands" hidden>
+        <h1 class="xjl-page-title">指令列表</h1>
+        <p class="xjl-page-sub">机器人当前支持的全部指令（登录后从后端拉取，与游戏内「星甲完整指令菜单」一致）</p>
+        <div class="xjl-toolbar">
+          <span class="xjl-hint" id="cmdTotal" style="margin:0">—</span>
+          <button type="button" class="xjl-btn xjl-ghost xjl-sm" id="cmdReload">刷新</button>
+        </div>
+        <div class="xjl-card" style="margin-top:10px">
+          <div id="cmdList"><div class="xjl-loading"><span class="xjl-spin"></span>加载中…</div></div>
+        </div>
+      </section>
+    </main>
+    <div class="xjl-toast" id="toast"></div>
+  </div>
+  <div class="xjl-auth-shell" id="authGate" hidden>
+    <form class="xjl-auth-card" id="authLoginForm" hidden>
+      <div class="xjl-auth-brand"><span class="xjl-mark">星甲娱乐</span><small>player console · 登录</small></div>
+      <label>管理密码
+        <input class="xjl-input" id="authPwd" type="password" autocomplete="current-password" placeholder="请输入控制台密码" />
+
+    <div style="color:#f59e0b;font-size:12px;margin:-6px 0 10px">初始密码：12345678（登录后请立即修改）</div>      </label>
+      <button type="submit" class="xjl-btn xjl-primary" id="authSubmit">登录</button>
+      <div class="xjl-err" id="authErr" hidden></div>
+      <p class="xjl-hint">初始密码 12345678，首次登录后必须修改；连续输错 3 次会锁定当前 IP 24 小时。</p>
+    </form>
+    <form class="xjl-auth-card" id="authChangeForm" hidden>
+      <div class="xjl-auth-brand"><span class="xjl-mark">修改密码</span><small id="cpSub">change password</small></div>
+      <label>旧密码
+        <input class="xjl-input" id="cpOld" type="password" autocomplete="current-password" />
+      </label>
+      <label>新密码
+        <input class="xjl-input" id="cpNew" type="password" autocomplete="new-password" />
+      </label>
+      <div class="xjl-check" id="cpChecks"></div>
+      <label>确认新密码
+        <input class="xjl-input" id="cpConfirm" type="password" autocomplete="new-password" />
+      </label>
+      <div class="xjl-err" id="cpErr" hidden></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" class="xjl-btn" id="cpCancel">取消</button>
+        <button type="submit" class="xjl-btn xjl-primary" id="cpSubmit">确认修改</button>
+      </div>
+      <p class="xjl-hint" id="cpForcedHint" hidden>当前仍在使用初始密码，修改完成前无法进入控制台。</p>
+    </form>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  var MARK = "/api/Plugin/ext/";
+  var STORE = "xjyl-mk-api-base";
+
+  function guessBase() {
+    var p = window.location.pathname || "";
+    var i = p.indexOf(MARK);
+    if (i >= 0) {
+      var seg = p.slice(i + MARK.length).split("/")[0];
+      if (seg) return MARK + seg;
+    }
+    return "";
+  }
+
+  var BASE = (function () {
+    try {
+      var s = localStorage.getItem(STORE);
+      if (s !== null && s !== undefined) return String(s).replace(/\/+$/, "");
+    } catch (e) {}
+    return guessBase();
+  })();
+
+  var META = null;
+  var PLAYERS = [];
+  var TOTAL = 0;
+  var SEL = "";
+  var SELDATA = null;
+  var OWNERS = null;
+  var LOGS = null;
+  var CONF = null;
+  var SHARP = null;
+  var TITLES = [];
+  // 2.9.8（需求 1）词条激活面板：全部词条键 + 各玩家已激活情况 + 当前选中玩家 / 勾选的词条
+  var ENTRIES = null;
+  var ENTRY_SEL = "";
+  var ENTRY_PICK = {};
+  var SERVER = null;
+  var SERVER_VAL = 1;
+  var VIEW = "overview";
+  var toastTimer = 0;
+
+  var RARITY_TONE = {
+    "普通": ["rgba(100,116,139,.14)", "#475569"],
+    "精良": ["rgba(5,150,105,.14)", "#047857"],
+    "优秀": ["rgba(13,148,136,.14)", "#0f766e"],
+    "稀有": ["rgba(37,99,235,.14)", "#1d4ed8"],
+    "史诗": ["rgba(147,51,234,.14)", "#7e22ce"],
+    "传说": ["rgba(234,88,12,.15)", "#c2410c"],
+    "神话": ["rgba(220,38,38,.15)", "#b91c1c"]
+  };
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function esc(v) {
+    return String(v === undefined || v === null ? "" : v)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function fmt(v) {
+    var n = Number(v);
+    if (!isFinite(n)) return "—";
+    return n.toLocaleString("zh-CN");
+  }
+
+  function pad2(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function shortId(v) {
+    var s = String(v || "");
+    if (!s) return "—";
+    return s.length <= 16 ? s : s.slice(0, 8) + "…" + s.slice(-6);
+  }
+
+  function rarityStyle(r) {
+    var t = RARITY_TONE[String(r || "").trim()] || ["rgba(100,116,139,.13)", "#475569"];
+    return "background:" + t[0] + ";color:" + t[1];
+  }
+
+  function titleOf(name) {
+    var s = String(name || "");
+    if (!s) return null;
+    for (var i = 0; i < TITLES.length; i++) {
+      if (TITLES[i] && String(TITLES[i]["名"]) === s) return TITLES[i];
+    }
+    return null;
+  }
+
+  // 账号类接口按契约使用「当前玩家编号」定位（后端 byGid 同时支持编号与 openid），无编号时退回 id
+  function acctIdOf(p) {
+    var n = p && p["编号"];
+    if (n === undefined || n === null || n === "") return p && p.id ? p.id : "";
+    return String(n);
+  }
+
+  function titleBadgeHtml(name) {
+    if (!name) return "";
+    var t = titleOf(name);
+    return '<span class="xjl-badge" style="' + (t ? rarityStyle(t["稀有度"]) : "") + '">' + esc(name) + "</span>";
+  }
+
+  // 2.8.0：后端把「火力」并入「攻击力」、「耐久 / 耐久上限」改名为「血量 / 血量上限」
+  // 旧字段名仍作为别名返回，前端一律按新名展示；下拉里两者同时出现时只保留「攻击力」
+  var FIELD_RENAME = { "火力": "攻击力", "耐久": "血量", "耐久上限": "血量上限" };
+
+  function normalizeFieldList(list) {
+    var src = Array.isArray(list) ? list : [];
+    var out = [];
+    var seen = {};
+    for (var i = 0; i < src.length; i++) {
+      var raw = String(src[i] === undefined || src[i] === null ? "" : src[i]).trim();
+      if (!raw) continue;
+      var name = FIELD_RENAME[raw] || raw;
+      if (seen[name]) continue;
+      seen[name] = true;
+      out.push(name);
+    }
+    return out;
+  }
+
+  // 战斗词条：前 4 条数值型（不带 %），后 12 条百分比型（两位小数）
+  var ENTRY_DEFS = [
+    { "键": "攻击力", "类型": "数值" },
+    { "键": "防御力", "类型": "数值" },
+    { "键": "生命", "类型": "数值" },
+    { "键": "血量", "类型": "数值" },
+    { "键": "闪避率", "类型": "百分比" },
+    { "键": "真伤概率", "类型": "百分比" },
+    { "键": "吸血", "类型": "百分比" },
+    { "键": "精准打击", "类型": "百分比" },
+    { "键": "复活率", "类型": "百分比" },
+    { "键": "重伤", "类型": "百分比" },
+    { "键": "追击率", "类型": "百分比" },
+    { "键": "追击伤害", "类型": "百分比" },
+    { "键": "抗暴率", "类型": "百分比" },
+    { "键": "闪击率", "类型": "百分比" },
+    { "键": "反击率", "类型": "百分比" },
+    { "键": "反击伤害", "类型": "百分比" }
+  ];
+  var ENTRY_ALIAS = { "攻击力": "攻击", "防御力": "防御", "生命": "血量上限", "血量": "血量" };
+  // 后端暂未交付这 10 条玩家词条；词条包缺失这些键时显示「敬请期待」徽章而不是 0.00%
+  var ENTRY_PENDING = { "吸血": 1, "精准打击": 1, "复活率": 1, "重伤": 1, "追击率": 1, "追击伤害": 1, "抗暴率": 1, "闪击率": 1, "反击率": 1, "反击伤害": 1 };
+
+  function entryValueOf(p, key) {
+    var bag = p && p["词条"];
+    if (bag && typeof bag === "object") {
+      var n = Number(bag[key]);
+      if (isFinite(n)) return n;
+    }
+    var alias = ENTRY_ALIAS[key];
+    if (alias) {
+      var v = Number(p && p[alias]);
+      if (isFinite(v)) return v;
+    }
+    return 0;
+  }
+
+  // 玩家.词条 缺失时整块隐藏（后端并行改造中的优雅降级）
+  function entryBlockHtml(p) {
+    var bag = p && p["词条"];
+    if (!bag || typeof bag !== "object") return "";
+    var cells = ENTRY_DEFS.map(function (it) {
+      var raw = Number(bag[it["键"]]);
+      var hasBag = isFinite(raw);
+      var pending = !hasBag && ENTRY_PENDING[it["键"]] === 1;
+      var v = hasBag ? raw : entryValueOf(p, it["键"]);
+      var cls = "xjl-entry" + (it["类型"] === "百分比" ? " pct" : "") + (pending ? " pend" : hasBag && v > 0 ? "" : " zero");
+      var valHtml = pending
+        ? '<span class="soon">敬请期待</span>'
+        : esc(it["类型"] === "百分比" ? (isFinite(v) ? v.toFixed(2) + "%" : "0.00%") : fmt(Math.round(v)));
+      return '<div class="' + cls + '"><span class="k">' + esc(it["键"]) + '</span><span class="v">' + valHtml + "</span></div>";
+    }).join("");
+    return (
+      '<h3 style="margin-top:14px">战斗词条 <span class="xjl-badge plain">' + ENTRY_DEFS.length + " 项</span></h3>" +
+      '<div class="xjl-entry-grid">' + cells + "</div>" +
+      '<p class="xjl-hint">来源为装备 / 称号 / 星灵，由系统自动汇总；网页端只读。</p>'
+    );
+  }
+
+  // 系统称号：后端改造中（可多个、带加成、自动发放），字段缺失时整块不显示
+  function systemTitlesOf(p) {
+    var arr = p && p["系统称号"];
+    if (!Array.isArray(arr)) return null;
+    var out = [];
+    for (var i = 0; i < arr.length; i++) {
+      var it = arr[i];
+      if (it === undefined || it === null || it === "") continue;
+      if (typeof it === "object") {
+        var name = String(it["名"] || it["称号"] || it["名称"] || "").trim();
+        if (name) out.push({ "名": name, "稀有度": String(it["稀有度"] || "").trim() });
+      } else {
+        var name2 = String(it).trim();
+        if (name2) out.push({ "名": name2, "稀有度": "" });
+      }
+    }
+    return out.length ? out : null;
+  }
+
+  function sysTitleBadgesHtml(p) {
+    var list = systemTitlesOf(p);
+    if (!list) return "";
+    return list
+      .map(function (t) {
+        var cls = "xjl-badge plain";
+        var style = "";
+        if (t["稀有度"]) {
+          cls = "xjl-badge";
+          style = ' style="' + rarityStyle(t["稀有度"]) + '"';
+        }
+        return '<span class="' + cls + '"' + style + ' title="系统称号">' + esc(t["名"]) + "</span>";
+      })
+      .join("");
+  }
+
+  function effectTagsHtml(effect) {
+    var src = effect || {};
+    var order = ["攻", "防", "血", "经验", "星羽", "掉落"];
+    var keys = [];
+    var i;
+    for (i = 0; i < order.length; i++) {
+      if (src[order[i]] !== undefined && src[order[i]] !== null) keys.push(order[i]);
+    }
+    for (var k in src) {
+      if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
+      if (order.indexOf(k) < 0) keys.push(k);
+    }
+    var parts = [];
+    for (i = 0; i < keys.length; i++) {
+      var n = Number(src[keys[i]]);
+      if (!isFinite(n) || n === 0) continue;
+      parts.push('<span class="xjl-tfx">' + esc(keys[i]) + esc((n > 0 ? "+" : "") + fmt(n)) + "</span>");
+    }
+    return parts.length ? '<div class="xjl-title-effects">' + parts.join("") + "</div>" : '<span class="xjl-hint" style="margin:0">无加成</span>';
+  }
+
+  function copyToClipboard(text, btn) {
+    var s = String(text == null ? "" : text);
+    if (!s) {
+      toast("没有可复制的内容");
+      return;
+    }
+    function done() {
+      toast("已复制到剪贴板");
+      if (btn) {
+        var old = btn.textContent;
+        btn.textContent = "已复制";
+        setTimeout(function () {
+          btn.textContent = old;
+        }, 1200);
+      }
+    }
+    function fallback() {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = s;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = document.execCommand && document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (ok) done();
+        else toast("复制失败，请手动选择");
+      } catch (e) {
+        toast("复制失败，请手动选择");
+      }
+    }
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      navigator.clipboard.writeText(s).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = String(msg || "");
+    t.className = "xjl-toast show";
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      t.className = "xjl-toast";
+    }, 2800);
+  }
+
+  function buildUrl(path, query) {
+    var url = BASE + path;
+    if (query) {
+      var sp = new URLSearchParams();
+      for (var k in query) {
+        if (!Object.prototype.hasOwnProperty.call(query, k)) continue;
+        var v = query[k];
+        if (v === undefined || v === null || v === "") continue;
+        sp.set(k, String(v));
+      }
+      var qs = sp.toString();
+      if (qs) url += "?" + qs;
+    }
+    return url;
+  }
+
+  // ====================== 登录认证（与后端契约的对齐点集中在这组常量） ======================
+  // - POST {base}/login {password} → 200 {token, 过期时间}（允许外包 {code:0,data} 壳）；401 密码错误；423 IP 锁定
+  // - POST {base}/password {旧密码, 新密码} → 200；400 = 复杂度不足（message 带原因）
+  // - 登录后所有请求自动带 Authorization: Bearer <token>（AUTH_HEADER / AUTH_PREFIX 一处改）
+  // - 401 → 清 token 回登录页；423 → 提示「IP 已被锁定至 HH:mm」
+  var AUTH_KEY = "xjyl-admin-auth";
+  var AUTH_HEADER = "Authorization";
+  var AUTH_PREFIX = "Bearer ";
+  var INITIAL_PASSWORD = "12345678";
+
+  function readAuth() {
+    try {
+      var raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || !obj.token) return null;
+      var exp = Number(obj.expiresAt);
+      if (isFinite(exp) && exp > 0 && Date.now() >= exp) return null;
+      return obj;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeAuth(token, expiresAt) {
+    try {
+      localStorage.setItem(AUTH_KEY, JSON.stringify({ token: String(token), expiresAt: Number(expiresAt) || 0, savedAt: Date.now() }));
+    } catch (e) {}
+  }
+
+  function clearAuth() {
+    try {
+      localStorage.removeItem(AUTH_KEY);
+    } catch (e) {}
+  }
+
+  function fmtHHmm(d) {
+    return pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  }
+
+  // 423 锁定提示：兼容 锁定至/lockedUntil（字符串）或 剩余锁定时间/剩余/retryAfter/remaining（毫秒或秒）
+  function describeLock(body) {
+    var b = body && typeof body === "object" ? body : {};
+    var base = String(b.message || b.msg || b.error || "").trim();
+    var until = "";
+    var fixed = b["锁定至"] || b.lockedUntil || b.unlockAt;
+    if (typeof fixed === "string" && fixed) {
+      until = fixed;
+    } else {
+      var n = Number(b["剩余锁定时间"] || b["剩余时间"] || b["剩余"] || b.retryAfter || b.remainingMs || b.remaining);
+      if (isFinite(n) && n > 0) until = fmtHHmm(new Date(Date.now() + (n > 1e6 ? n : n * 1000)));
+    }
+    var suffix = until ? "IP 已被锁定至 " + until : "IP 已被锁定，请联系管理员在插件配置中解锁";
+    return base ? base + (until ? "（至 " + until + "）" : "") : suffix;
+  }
+
+  // 密码复杂度：大写 + 小写 + 数字 + 特殊符号 + ≥8 位（逐项打勾用）
+  var PWD_RULES = [
+    ["大写字母", function (s) { return /[A-Z]/.test(s); }],
+    ["小写字母", function (s) { return /[a-z]/.test(s); }],
+    ["数字", function (s) { return /[0-9]/.test(s); }],
+    ["特殊符号", function (s) { return /[^A-Za-z0-9]/.test(s); }],
+    ["至少 8 位", function (s) { return s.length >= 8; }]
+  ];
+
+  function pwdIssues(s) {
+    var v = String(s || "");
+    var out = [];
+    for (var i = 0; i < PWD_RULES.length; i++) {
+      if (!PWD_RULES[i][1](v)) out.push(PWD_RULES[i][0]);
+    }
+    return out;
+  }
+
+  // 过期时间兼容：毫秒/秒时间戳或 ISO 字符串；解析失败按 0（由后端 401 兜底）
+  function parseExpiry(v) {
+    if (v === undefined || v === null || v === "") return 0;
+    var n = Number(v);
+    if (isFinite(n) && n > 0) return n < 1e12 ? n * 1000 : n;
+    if (typeof v === "string") {
+      var t = Date.parse(v);
+      if (isFinite(t)) return t;
+    }
+    return 0;
+  }
+
+  function parseAuthResponse(body) {
+    var b = body && typeof body === "object" ? body : {};
+    var data = b.data && typeof b.data === "object" ? b.data : b;
+    var token = data.token || data.Token || data.access_token;
+    if (!token) return null;
+    var rawExp = data["过期时间"] !== undefined ? data["过期时间"] : data.expiresAt !== undefined ? data.expiresAt : data.expireAt;
+    return { token: String(token), expiresAt: parseExpiry(rawExp), needChange: !!(data["需改密"] || data.needChange || data.needChangePassword) };
+  }
+
+  function postAuthJson(path, payload, token) {
+    var headers = { "Content-Type": "application/json" };
+    if (token) headers[AUTH_HEADER] = AUTH_PREFIX + token;
+    return fetch(buildUrl(path), { method: "POST", credentials: "include", headers: headers, body: JSON.stringify(payload || {}) })
+      .then(function (res) {
+        return res.text().then(function (text) {
+          var body = null;
+          if (text) {
+            try {
+              body = JSON.parse(text);
+            } catch (e) {
+              body = null;
+            }
+          }
+          return { res: res, body: body };
+        });
+      })
+      .catch(function () {
+        throw new Error("后端未就绪，请稍后再试");
+      });
+  }
+
+  // 登录：区分「密码错误（剩余 N 次）」「IP 已锁定」「后端未就绪」
+  function requestLogin(password) {
+    return postAuthJson("/login", { password: String(password || "") }, null).then(function (r) {
+      if (r.res.status === 401) {
+        var b = r.body || {};
+        var left = Number(b["剩余次数"] || b.remaining || b.attemptsLeft || b.attempts);
+        throw new Error(isFinite(left) && left > 0 ? "密码错误（剩余 " + left + " 次尝试）" : "密码错误");
+      }
+      if (r.res.status === 423) throw new Error(describeLock(r.body));
+      if (r.res.status === 400) throw new Error((r.body && (r.body.message || r.body.msg)) || "请求格式有误");
+      if (!r.res.ok) throw new Error((r.body && (r.body.message || r.body.msg || r.body.error)) || "登录失败（HTTP " + r.res.status + "）");
+      var parsed = parseAuthResponse(r.body);
+      if (!parsed) throw new Error("后端未就绪（响应缺少 token）");
+      return parsed;
+    });
+  }
+
+  // 修改密码：400 时透出后端给出的具体原因；401 视为会话过期回登录页
+  function requestChangePassword(oldPwd, newPwd) {
+    var auth = readAuth();
+    return postAuthJson("/password", { "旧密码": String(oldPwd || ""), "新密码": String(newPwd || "") }, auth ? auth.token : null).then(function (r) {
+      if (r.res.status === 401) {
+        clearAuth();
+        showGate("login");
+        throw new Error("登录已过期，请重新登录后再修改密码");
+      }
+      if (r.res.status === 400) throw new Error((r.body && (r.body.message || r.body.msg || r.body.error)) || "新密码复杂度不足");
+      if (r.res.status === 423) throw new Error(describeLock(r.body));
+      if (!r.res.ok) throw new Error((r.body && (r.body.message || r.body.msg || r.body.error)) || "修改密码失败（HTTP " + r.res.status + "）");
+      var b = r.body && typeof r.body === "object" ? r.body : {};
+      if (b.code !== undefined && b.code !== 0) throw new Error(b.message || "修改密码失败");
+      return true;
+    });
+  }
+
+  function request(url, init) {
+    var auth = readAuth();
+    if (auth && auth.token) {
+      var hdrs = Object.assign({}, init && init.headers ? init.headers : {});
+      hdrs[AUTH_HEADER] = AUTH_PREFIX + auth.token;
+      init = Object.assign({}, init, { headers: hdrs });
+    }
+    return fetch(url, init).then(function (res) {
+      return res.text().then(function (text) {
+        var body = null;
+        if (text) {
+          try {
+            body = JSON.parse(text);
+          } catch (e) {
+            body = null;
+          }
+        }
+        if (res.status === 401) {
+          clearAuth();
+          showGate("login");
+          throw new Error("登录已过期，请重新登录");
+        }
+        if (res.status === 423) throw new Error(describeLock(body));
+        if (!res.ok) {
+          var msg = body && (body.message || body.msg || body.error);
+          throw new Error(msg ? String(msg) : "HTTP " + res.status);
+        }
+        if (body === null) throw new Error("服务端返回了非 JSON 内容");
+        if (body.code !== 0) throw new Error(body.message || "请求失败");
+        return body.data;
+      });
+    });
+  }
+
+  function apiGet(path, query) {
+    return request(buildUrl(path, query), { method: "GET", credentials: "include" }).catch(function (e) {
+      throw new Error("请求 " + path + " 失败：" + (e && e.message ? e.message : String(e)));
+    });
+  }
+
+  function apiPost(path, body) {
+    return request(buildUrl(path), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    }).catch(function (e) {
+      throw new Error("请求 " + path + " 失败：" + (e && e.message ? e.message : String(e)));
+    });
+  }
+
+  function loadingHtml(text) {
+    return '<div class="xjl-loading"><span class="xjl-spin"></span>' + esc(text || "加载中…") + "</div>";
+  }
+
+  function emptyHtml(text) {
+    return '<div class="xjl-empty">' + esc(text || "暂无数据") + "</div>";
+  }
+
+  function errHtml(text) {
+    return text ? '<div class="xjl-err">' + esc(text) + "</div>" : "";
+  }
+
+  function statHtml(label, value, hint) {
+    return (
+      '<div class="xjl-stat"><span class="xjl-stat-label">' + esc(label) + "</span>" +
+      '<span class="xjl-stat-value">' + esc(value) + "</span>" +
+      (hint ? '<span class="xjl-stat-hint">' + esc(hint) + "</span>" : "") +
+      "</div>"
+    );
+  }
+
+  function kvHtml(rows) {
+    return rows
+      .map(function (r) {
+        return "<div><span>" + esc(r[0]) + "</span><b>" + esc(r[1] === undefined || r[1] === null || r[1] === "" ? "—" : r[1]) + "</b></div>";
+      })
+      .join("");
+  }
+
+  function chartHtml(hours) {
+    var data = (Array.isArray(hours) ? hours : []).map(function (x) {
+      return Number(x) || 0;
+    });
+    while (data.length < 24) data.push(0);
+    data = data.slice(0, 24);
+    var max = Math.max.apply(null, [1].concat(data));
+    var W = 720;
+    var H = 180;
+    var padY = 10;
+    var plotH = H - padY * 2;
+    var pts = data.map(function (v, i) {
+      return [(i / 23) * W, padY + (1 - v / max) * plotH];
+    });
+    var line = pts
+      .map(function (p, i) {
+        return (i === 0 ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1);
+      })
+      .join(" ");
+    var area = line + " L" + W + "," + (padY + plotH) + " L0," + (padY + plotH) + " Z";
+    var grid = [0, 0.5, 1]
+      .map(function (f) {
+        var y = (padY + (1 - f) * plotH).toFixed(1);
+        return '<line x1="0" y1="' + y + '" x2="' + W + '" y2="' + y + '" stroke="rgba(100,116,139,.22)" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke" />';
+      })
+      .join("");
+    var xAxis = "";
+    for (var i = 0; i < 24; i++) xAxis += "<span>" + (i % 3 === 0 ? i + "h" : "") + "</span>";
+    return (
+      '<div class="xjl-chart">' +
+      '<div class="xjl-chart-y"><span>' + esc(fmt(max)) + "</span><span>" + esc(fmt(Math.round(max / 2))) + "</span><span>0</span></div>" +
+      '<div class="xjl-chart-plot">' +
+      '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" role="img" aria-label="24 小时消息分布">' +
+      grid +
+      '<path d="' + area + '" fill="rgba(13,148,136,.16)" />' +
+      '<path d="' + line + '" fill="none" stroke="#0d9488" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />' +
+      "</svg></div>" +
+      '<div class="xjl-chart-x">' + xAxis + "</div>" +
+      "</div>"
+    );
+  }
+
+  function fieldList() {
+    if (META && Array.isArray(META["字段"]) && META["字段"].length) return normalizeFieldList(META["字段"]);
+    return ["等级", "经验", "星羽", "存款", "星核", "贡献", "攻击力", "血量", "血量上限", "暴击", "闪避", "转生", "强化"];
+  }
+
+  function itemList() {
+    return META && Array.isArray(META["道具"]) ? META["道具"] : [];
+  }
+
+  function switchView(v) {
+    VIEW = v;
+    var items = document.querySelectorAll(".xjl-nav-item");
+    for (var i = 0; i < items.length; i++) {
+      var on = items[i].getAttribute("data-view") === v;
+      items[i].className = "xjl-nav-item" + (on ? " active" : "");
+    }
+    var panels = document.querySelectorAll("main > section");
+    for (var j = 0; j < panels.length; j++) {
+      panels[j].hidden = panels[j].id !== "panel-" + v;
+    }
+    if (v === "overview") loadOverview();
+    if (v === "players") loadPlayers();
+    if (v === "server") loadServer();
+    if (v === "economy") loadEconomy();
+    if (v === "activity") loadActivity();
+    if (v === "farm") loadFarm();
+    if (v === "owners") loadOwners();
+    if (v === "manage") loadManage();
+    if (v === "commands") loadCommands();
+    if (v === "logs") {
+      loadLogs();
+      loadSticky();
+    }
+    if (v === "settings") loadConfig();
+  }
+
+  function loadMeta() {
+    return apiGet("/meta")
+      .then(function (d) {
+        META = d || null;
+      })
+      .catch(function () {
+        META = null;
+      });
+  }
+
+  function loadOverview() {
+    $("ovStats").innerHTML = loadingHtml();
+    apiGet("/dashboard")
+      .then(function (d) {
+        var sum = (d && d["汇总"]) || {};
+        $("ovStats").innerHTML = [
+          statHtml("玩家数", fmt(sum["玩家数"]), "已建档玩家"),
+          statHtml("星羽总额", fmt(sum["星羽"]), "全服持有星羽"),
+          statHtml("存款总额", fmt(sum["存款"]), "全服银行存款"),
+          statHtml("星核总额", fmt(sum["星核"])),
+          statHtml("封禁数", fmt(sum["封禁"]), "当前封禁玩家"),
+          statHtml("今日经验", fmt(sum["今日经验"]), "全服今日获得")
+        ].join("");
+        $("ovChart").innerHTML = chartHtml((d && d["小时"]) || []);
+        $("ovToday").innerHTML = kvHtml([
+          ["今日消息", fmt(d && d["今日消息"])],
+          ["今日活跃", fmt(d && d["今日活跃"]) + " 个用户"],
+          ["今日群数", fmt(d && d["今日群数"]) + " 个群"],
+          ["日期", (d && d["日期"]) || "—"]
+        ]);
+        $("ovMeta").innerHTML = kvHtml([
+          ["版本", (d && d["版本"]) || "—"],
+          ["日志目录", (d && d["日志目录"]) || "—"]
+        ]);
+      })
+      .catch(function (e) {
+        $("ovStats").innerHTML = emptyHtml("读取概览失败");
+        $("ovChart").innerHTML = errHtml(e.message);
+        toast(e.message);
+      });
+  }
+
+  function renderPlayerTable() {
+    $("plTotal").textContent = "共 " + fmt(TOTAL) + " 位，展示前 200 位";
+    if (!PLAYERS.length) {
+      $("plTable").innerHTML = emptyHtml($("plQ").value ? "没有匹配的玩家" : "暂无玩家数据");
+      return;
+    }
+    var rows = PLAYERS.map(function (p) {
+      var active = SEL && p.id === SEL ? " active" : "";
+      var sysT = systemTitlesOf(p);
+      var titleCell =
+        '<span style="display:inline-flex;gap:5px;flex-wrap:wrap;align-items:center">' +
+        (p["称号"] ? titleBadgeHtml(p["称号"]) : "") +
+        sysTitleBadgesHtml(p) +
+        (!p["称号"] && !sysT ? '<span class="xjl-mono">—</span>' : "") +
+        "</span>";
+      return (
+        '<tr class="clickable' + active + '" data-id="' + esc(p.id) + '">' +
+        '<td class="xjl-num">' + esc(p["编号"] === undefined ? "—" : p["编号"]) + "</td>" +
+        '<td title="' + esc(p.id) + '"><div style="display:flex;flex-direction:column;line-height:1.25">' +
+        "<span>" + esc(p["昵称"] || "未命名") + "</span>" +
+        '<span class="xjl-mono">' + esc(shortId(p.id)) + "</span></div></td>" +
+        '<td class="xjl-num">' + esc(fmt(p["等级"])) + "</td>" +
+        '<td class="xjl-num">' + esc(fmt(p["战力"])) + "</td>" +
+        '<td class="xjl-num">' + esc(fmt(p["星羽"])) + "</td>" +
+        '<td class="xjl-num">' + esc(fmt(p["存款"])) + "</td>" +
+        '<td class="xjl-num">' + esc(fmt(p["星核"])) + "</td>" +
+        "<td>" + titleCell + "</td>" +
+        '<td><span style="display:inline-flex;gap:5px;flex-wrap:wrap">' +
+        (p["封禁"] ? '<span class="xjl-badge fail">封禁</span>' : "") +
+        (p["已解绑"] ? '<span class="xjl-badge warn">已解绑</span>' : "") +
+        (!p["封禁"] && !p["已解绑"] ? '<span class="xjl-badge ok">正常</span>' : "") +
+        "</span></td>" +
+        "</tr>"
+      );
+    });
+    $("plTable").innerHTML =
+      '<div class="xjl-table-wrap" style="max-height:62vh"><table class="xjl-table min"><thead><tr>' +
+      '<th>编号</th><th>昵称</th><th style="text-align:right">等级</th><th style="text-align:right">战力</th>' +
+      '<th style="text-align:right">星羽</th><th style="text-align:right">存款</th><th style="text-align:right">星核</th><th>称号</th><th>状态</th>' +
+      "</tr></thead><tbody>" +
+      rows.join("") +
+      "</tbody></table></div>";
+    var trs = $("plTable").querySelectorAll("tbody tr");
+    for (var i = 0; i < trs.length; i++) {
+      trs[i].onclick = function () {
+        openPlayer(this.getAttribute("data-id"));
+      };
+    }
+  }
+
+  function loadPlayers(quiet) {
+    if (!quiet) $("plTable").innerHTML = loadingHtml("读取玩家列表…");
+    apiGet("/players", { q: $("plQ").value, sort: $("plSort").value, limit: 200 })
+      .then(function (d) {
+        PLAYERS = (d && d.list) || [];
+        TOTAL = Number(d && d.total) || 0;
+        renderPlayerTable();
+      })
+      .catch(function (e) {
+        if (quiet) {
+          toast(e.message);
+          return;
+        }
+        $("plTable").innerHTML = emptyHtml("读取玩家列表失败") + errHtml(e.message);
+      });
+  }
+
+  function openPlayer(id) {
+    SEL = String(id || "");
+    renderPlayerTable();
+    $("plDetail").innerHTML = loadingHtml("读取玩家详情…");
+    apiGet("/player", { id: SEL })
+      .then(function (d) {
+        SELDATA = d || null;
+        renderDetail();
+      })
+      .catch(function (e) {
+        SELDATA = null;
+        $("plDetail").innerHTML = '<h3>玩家详情</h3>' + emptyHtml("读取详情失败") + errHtml(e.message);
+        toast(e.message);
+      });
+  }
+
+  function renderDetail() {
+    if (!SELDATA || !SELDATA["玩家"]) {
+      $("plDetail").innerHTML = '<h3>玩家详情</h3>' + emptyHtml("找不到该玩家");
+      return;
+    }
+    var p = SELDATA["玩家"];
+    var bag = SELDATA["道具"] || {};
+    var logs = SELDATA["最近管理"] || [];
+    var keys = ["编号", "昵称", "等级", "经验", "星羽", "存款", "星核", "贡献", "攻击力", "血量", "血量上限", "暴击", "闪避", "转生", "强化", "战力", "军衔", "联盟", "等级上限", "可强化"];
+    var attrs = keys
+      .map(function (k) {
+        var v = p[k];
+        var text = typeof v === "number" ? fmt(v) : v === undefined || v === null || v === "" ? "—" : String(v);
+        return '<div class="xjl-attr"><div class="k">' + esc(k) + '</div><div class="v" title="' + esc(text) + '">' + esc(text) + "</div></div>";
+      })
+      .join("");
+
+    var fields = fieldList();
+    var opts = fields
+      .map(function (f) {
+        return '<option value="' + esc(f) + '">' + esc(f) + "</option>";
+      })
+      .join("");
+    var cur = p["等级"] === undefined ? fields[0] : "等级";
+
+    var items = itemList();
+    var itemOpts = items.length
+      ? items.map(function (it) { return '<option value="' + esc(it) + '">' + esc(it) + "</option>"; }).join("")
+      : "";
+    var itemControl = items.length
+      ? '<select class="xjl-select" id="dtItem">' + itemOpts + "</select>"
+      : '<input class="xjl-input" id="dtItem" style="width:130px" placeholder="道具名" />';
+
+    var bagKeys = Object.keys(bag).sort(function (a, b) {
+      return Number(bag[b]) - Number(bag[a]);
+    });
+    var bagHtml = bagKeys.length
+      ? bagKeys
+          .map(function (n) {
+            var c = Number(bag[n]) || 0;
+            return '<span class="xjl-item' + (c > 0 ? " has" : " zero") + '" title="' + esc(n) + '">' + esc(n) + "<b>" + esc(fmt(c)) + "</b></span>";
+          })
+          .join("")
+      : '<span class="xjl-hint" style="margin:0">暂无道具数据</span>';
+
+    var logHtml = logs.length
+      ? logs
+          .map(function (lg) {
+            return (
+              '<div class="xjl-log-row"><div class="xjl-log-top"><span>' + esc(lg["时间"] || "—") +
+              '</span><span class="xjl-log-who">' + esc(lg["操作者"] || "系统") + '</span></div>' +
+              '<div class="xjl-log-text">' + esc(lg["内容"] || "") + "</div></div>"
+            );
+          })
+          .join("")
+      : emptyHtml("暂无管理记录");
+
+    var numText = p["编号"] === undefined || p["编号"] === null ? "" : String(p["编号"]);
+    var oidText = String(p.openid || p.id || "");
+    var unbound = p["已解绑"] === true;
+    // 定制称号：主人发放的自由文本（无加成，每人 1 个）；系统称号：只读徽章
+    var sysT = systemTitlesOf(p);
+
+    var acctHtml =
+      '<h3 style="margin-top:14px">账号与身份 ' +
+      (unbound ? '<span class="xjl-badge warn">已解绑</span>' : '<span class="xjl-badge ok">已绑定</span>') +
+      "</h3>" +
+      '<div class="xjl-idgrid">' +
+      '<div class="xjl-idrow"><span class="k">玩家编号</span><span class="v" title="' + esc(numText) + '">' + esc(numText ? "#" + numText : "—") + "</span>" +
+      (numText ? '<button type="button" class="xjl-copy" data-copy="' + esc(numText) + '">复制</button>' : "") +
+      "</div>" +
+      '<div class="xjl-idrow"><span class="k">openid</span><span class="v xjl-mono" title="' + esc(oidText) + '">' + esc(oidText ? shortId(oidText) : "—") + "</span>" +
+      (oidText ? '<button type="button" class="xjl-copy" data-copy="' + esc(oidText) + '">复制</button>' : "") +
+      "</div>" +
+      '<div class="xjl-idrow"><span class="k">定制称号</span><span class="v">' + (p["称号"] ? titleBadgeHtml(p["称号"]) : '<span class="xjl-mono">无定制称号</span>') + "</span></div>" +
+      (sysT
+        ? '<div class="xjl-idrow"><span class="k">系统称号</span><span class="v" style="display:block;white-space:normal"><span style="display:inline-flex;gap:6px;flex-wrap:wrap">' + sysTitleBadgesHtml(p) + "</span></span></div>"
+        : "") +
+      '<div class="xjl-idrow"><span class="k">绑定状态</span><span class="v">' + (unbound ? "已解绑 · 旧号数据保留" : "已绑定当前 openid") + "</span></div>" +
+      "</div>" +
+      '<div class="xjl-block"><div class="xjl-block-title">修改编号<span class="xjl-hint">1 ~ 999999999，不能与他人重复</span></div>' +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<label class="xjl-field">新编号<input class="xjl-input" id="dtNum" style="width:150px" inputmode="numeric" maxlength="9" value="' + esc(numText) + '" placeholder="如 10086" /></label>' +
+      '<button type="button" class="xjl-btn xjl-primary" id="dtNumSave">保存编号</button></div></div>' +
+      '<div class="xjl-block"><div class="xjl-block-title">定制称号<span class="xjl-hint">主人发放 · 无加成 · 每人 1 个</span></div>' +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<label class="xjl-field" style="flex:1 1 220px">称号内容<input class="xjl-input" id="dtTitle" style="flex:1;min-width:0" maxlength="24" value="' + esc(p["称号"] || "") + '" placeholder="输入任意称号文字" /></label>' +
+      '<button type="button" class="xjl-btn xjl-primary" id="dtTitleSave">保存</button>' +
+      '<button type="button" class="xjl-btn" id="dtTitleClear"' + (p["称号"] ? "" : " disabled") + ">清除</button></div>" +
+      '<p class="xjl-hint">定制称号是自由文本，不受称号表限制；与系统称号共存，互不覆盖。</p></div>' +
+      '<div class="xjl-block"><div class="xjl-block-title">改绑 openid<span class="xjl-hint">把该编号的数据改绑到新的 openid</span></div>' +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<label class="xjl-field" style="flex:1 1 240px">openid<input class="xjl-input" id="dtOpenid" style="flex:1;min-width:0" value="' + esc(oidText) + '" placeholder="粘贴新的完整 openid" /></label>' +
+      '<button type="button" class="xjl-btn xjl-primary" id="dtRebind">保存改绑</button></div>' +
+      '<p class="xjl-hint">目标 openid 已有其他账号时会失败，请先解绑目标账号再改绑。</p></div>' +
+      '<div class="xjl-block"><div class="xjl-block-title">转移旧号数据' +
+      (unbound ? '<span class="xjl-badge warn">可转移</span>' : '<span class="xjl-badge plain">需先解绑</span>') +
+      "</div>" +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<label class="xjl-field" style="flex:1 1 240px">目标 openid<input class="xjl-input" id="dtTarget" style="flex:1;min-width:0" placeholder="接收数据的 openid"' + (unbound ? "" : " disabled") + " /></label>" +
+      '<button type="button" class="xjl-btn xjl-ghost" id="dtTransfer"' + (unbound ? "" : " disabled") + ">转移数据</button></div>" +
+      '<p class="xjl-hint">' + (unbound ? "把该旧号的数据整份复制给目标 openid；目标若已有账号会失败，需先解绑目标账号。" : "只有「已解绑」的旧号才能转移数据，请先解绑当前账号。") + "</p></div>" +
+      '<div class="xjl-block"><div class="xjl-block-title">解绑账号<span class="xjl-badge fail">危险操作</span></div>' +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<button type="button" class="xjl-btn xjl-danger" id="dtUnbind"' + (unbound ? " disabled" : "") + ">" + (unbound ? "当前已解绑" : "解绑账号") + "</button></div>" +
+      '<p class="xjl-hint">解绑后该用户可用原 openid 开新号；旧号数据保留，可在此查看、改绑或转移给别的 openid。</p></div>';
+
+    $("plDetail").innerHTML =
+      '<div class="xjl-detail-head"><div>' +
+      '<div class="xjl-detail-name">' + esc(p["昵称"] || "未命名") +
+      (p["封禁"] ? '<span class="xjl-badge fail">已封禁</span>' : '<span class="xjl-badge ok">正常</span>') +
+      (unbound ? '<span class="xjl-badge warn">已解绑</span>' : "") +
+      (p["称号"] ? titleBadgeHtml(p["称号"]) : "") +
+      (p["军衔"] ? '<span class="xjl-badge plain">' + esc(p["军衔"]) + "</span>" : "") +
+      (p["联盟"] ? '<span class="xjl-badge">' + esc(p["联盟"]) + "</span>" : "") +
+      '</div><div class="xjl-detail-sub" title="' + esc(oidText) + '">openid：' + esc(oidText || "—") + "</div></div>" +
+      '<button type="button" class="xjl-btn xjl-sm" id="dtClose">关闭</button></div>' +
+      '<div class="xjl-attr-grid" style="margin-top:12px">' + attrs + "</div>" +
+      entryBlockHtml(p) +
+      acctHtml +
+      '<h3 style="margin-top:14px">编辑属性</h3>' +
+      '<div class="xjl-form-row" style="margin-top:0">' +
+      '<label class="xjl-field">字段<select class="xjl-select" id="dtField">' + opts + "</select></label>" +
+      '<label class="xjl-field">数值<input class="xjl-input" id="dtValue" type="number" step="1" style="width:130px" value="' + esc(cur === undefined ? "" : p[cur]) + '" /></label>' +
+      '<button type="button" class="xjl-btn xjl-primary" id="dtSave">保存</button>' +
+      "</div>" +
+      '<p class="xjl-hint">可编辑字段由插件定义，共 ' + esc(fields.length) + " 项。</p>" +
+      "<h3 style=\"margin-top:14px\">背包道具</h3>" +
+      '<div class="xjl-items">' + bagHtml + "</div>" +
+      '<div class="xjl-form-row">' +
+      '<label class="xjl-field">道具' + itemControl + "</label>" +
+      '<label class="xjl-field">数量<input class="xjl-input" id="dtCount" type="number" step="1" min="1" style="width:96px" value="1" /></label>' +
+      '<button type="button" class="xjl-btn xjl-primary" id="dtGive">发放</button>' +
+      '<button type="button" class="xjl-btn xjl-danger" id="dtTake">扣除</button>' +
+      "</div>" +
+      '<h3 style="margin-top:14px">最近管理记录</h3>' +
+      '<div class="xjl-form-row" style="margin-top:0;margin-bottom:8px">' +
+      '<button type="button" class="xjl-btn xjl-sm ' + (p["封禁"] ? "xjl-primary" : "xjl-danger") + '" id="dtBan">' + (p["封禁"] ? "解除封禁" : "封禁玩家") + "</button>" +
+      '<button type="button" class="xjl-btn xjl-sm xjl-danger" id="dtReset">重置玩家</button>' +
+      "</div>" +
+      '<div class="xjl-list">' + logHtml + "</div>";
+
+    var fld = $("dtField");
+    fld.value = cur;
+    fld.onchange = function () {
+      var v = p[this.value];
+      $("dtValue").value = v === undefined || v === null ? "" : v;
+    };
+
+    $("dtClose").onclick = function () {
+      SEL = "";
+      SELDATA = null;
+      renderPlayerTable();
+      $("plDetail").innerHTML = '<h3>玩家详情</h3><div class="xjl-empty">点击左侧任意玩家查看属性、背包与管理记录</div>';
+    };
+    $("dtSave").onclick = function () { saveField(p.id); };
+    $("dtGive").onclick = function () { giveItem(p.id, 1); };
+    $("dtTake").onclick = function () { giveItem(p.id, -1); };
+    $("dtBan").onclick = function () { toggleBan(p); };
+    $("dtReset").onclick = function () { resetPlayer(p); };
+    $("dtNumSave").onclick = function () { saveNumber(p); };
+    $("dtTitleSave").onclick = function () { saveTitle(p); };
+    $("dtTitleClear").onclick = function () { clearTitle(p); };
+    $("dtRebind").onclick = function () { rebindPlayer(p); };
+    $("dtTransfer").onclick = function () { transferPlayer(p); };
+    $("dtUnbind").onclick = function () { unbindPlayer(p); };
+    var copies = $("plDetail").querySelectorAll("[data-copy]");
+    for (var ci = 0; ci < copies.length; ci++) {
+      copies[ci].onclick = function () {
+        copyToClipboard(this.getAttribute("data-copy"), this);
+      };
+    }
+  }
+
+  function applyAccount(d) {
+    var up = d && d["玩家"];
+    if (up) {
+      if (SELDATA) SELDATA["玩家"] = up;
+      PLAYERS = PLAYERS.map(function (x) {
+        return x.id === up.id ? Object.assign({}, x, up) : x;
+      });
+      var nid = String(up.id || "");
+      if (nid && nid !== String(SEL)) {
+        openPlayer(nid);
+        loadPlayers(true);
+        return;
+      }
+    }
+    renderDetail();
+    loadPlayers(true);
+  }
+
+  function saveNumber(p) {
+    var raw = String($("dtNum").value || "").trim();
+    if (!/^\d+$/.test(raw)) {
+      toast("新编号必须是 1 ~ 999999999 的整数");
+      return;
+    }
+    var n = Number(raw);
+    if (!isFinite(n) || n < 1 || n > 999999999) {
+      toast("新编号超出范围，只能是 1 ~ 999999999");
+      return;
+    }
+    if (String(n) === String(p["编号"])) {
+      toast("编号未变化");
+      return;
+    }
+    var btn = $("dtNumSave");
+    if (btn) btn.disabled = true;
+    apiPost("/player/number", { id: acctIdOf(p), number: String(n) })
+      .then(function (d) {
+        toast("编号已改为 #" + n);
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtNumSave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function saveTitle(p) {
+    var pick = String($("dtTitle").value || "").trim();
+    if (!pick) {
+      toast("请输入要发放的定制称号");
+      return;
+    }
+    var btn = $("dtTitleSave");
+    if (btn) btn.disabled = true;
+    apiPost("/player/title", { id: acctIdOf(p), title: pick })
+      .then(function (d) {
+        toast("已发放定制称号「" + pick + "」");
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtTitleSave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function clearTitle(p) {
+    if (!p["称号"]) {
+      toast("该玩家当前没有定制称号");
+      return;
+    }
+    apiPost("/player/title", { id: acctIdOf(p), title: "" })
+      .then(function (d) {
+        toast("已清除该玩家的定制称号");
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      });
+  }
+
+  function rebindPlayer(p) {
+    var next = String($("dtOpenid").value || "").trim();
+    if (!next) {
+      toast("请输入要改绑的 openid");
+      return;
+    }
+    var cur = String(p.openid || p.id || "");
+    if (next === cur) {
+      toast("openid 未变化");
+      return;
+    }
+    var btn = $("dtRebind");
+    if (btn) btn.disabled = true;
+    apiPost("/player/rebind", { id: acctIdOf(p), openid: next })
+      .then(function (d) {
+        toast("已改绑到新的 openid");
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtRebind");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function transferPlayer(p) {
+    if (p["已解绑"] !== true) {
+      toast("只有已解绑的旧号才能转移数据");
+      return;
+    }
+    var next = String($("dtTarget").value || "").trim();
+    if (!next) {
+      toast("请输入接收数据的 openid");
+      return;
+    }
+    if (
+      !window.confirm(
+        "将把旧号「" + (p["昵称"] || "未命名") + "（#" + (p["编号"] || "—") + "）」的数据整份复制给 openid：\n" +
+          next +
+          "\n\n若目标已有账号会失败，需先解绑目标账号。确认继续？"
+      )
+    )
+      return;
+    var btn = $("dtTransfer");
+    if (btn) btn.disabled = true;
+    apiPost("/player/transfer", { id: acctIdOf(p), openid: next })
+      .then(function (d) {
+        toast("旧号数据已转移给目标 openid");
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtTransfer");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function unbindPlayer(p) {
+    if (p["已解绑"] === true) {
+      toast("该账号已解绑");
+      return;
+    }
+    if (
+      !window.confirm(
+        "即将解绑「" + (p["昵称"] || "未命名") + "（#" + (p["编号"] || "—") + "）」。\n\n" +
+          "解绑后该用户可用原 openid 开新号；旧号数据保留，可在此查看、改绑或转移给别的 openid。\n\n确认继续？"
+      )
+    )
+      return;
+    var btn = $("dtUnbind");
+    if (btn) btn.disabled = true;
+    apiPost("/player/unbind", { id: acctIdOf(p) })
+      .then(function (d) {
+        toast("已解绑该账号，旧号数据保留");
+        return applyAccount(d);
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtUnbind");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function saveField(id) {
+    var field = $("dtField").value;
+    var raw = $("dtValue").value;
+    var num = Number(raw);
+    if (raw === "" || !isFinite(num)) {
+      toast("请输入数字");
+      return;
+    }
+    var btn = $("dtSave");
+    btn.disabled = true;
+    apiPost("/player/update", { id: id, field: field, value: Math.floor(num) })
+      .then(function (d) {
+        if (d && d["玩家"]) {
+          SELDATA["玩家"] = d["玩家"];
+          var up = d["玩家"];
+          PLAYERS = PLAYERS.map(function (x) {
+            return x.id === up.id ? Object.assign({}, x, up) : x;
+          });
+        }
+        toast("已设置 " + field + " = " + fmt(Math.floor(num)));
+        return apiGet("/player", { id: id }).then(function (dd) {
+          SELDATA = dd || SELDATA;
+          renderDetail();
+          renderPlayerTable();
+        });
+      })
+      .catch(function (e) {
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("dtSave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function giveItem(id, sign) {
+    var item = $("dtItem").value;
+    var raw = $("dtCount").value;
+    var n = Number(raw);
+    if (!item) {
+      toast("请填写道具名");
+      return;
+    }
+    if (!isFinite(n) || Math.floor(n) !== n || n <= 0) {
+      toast("数量必须是正整数");
+      return;
+    }
+    apiPost("/player/items", { id: id, item: item, count: sign * Math.floor(n) })
+      .then(function (d) {
+        if (d && d["道具"]) SELDATA["道具"] = d["道具"];
+        toast((sign > 0 ? "已发放 " : "已扣除 ") + item + " × " + fmt(Math.floor(n)));
+        renderDetail();
+      })
+      .catch(function (e) {
+        toast(e.message);
+      });
+  }
+
+  function toggleBan(p) {
+    var banned = !p["封禁"];
+    apiPost("/player/ban", { id: p.id, banned: banned })
+      .then(function (d) {
+        if (d && d["玩家"]) {
+          SELDATA["玩家"] = d["玩家"];
+          var up = d["玩家"];
+          PLAYERS = PLAYERS.map(function (x) {
+            return x.id === up.id ? Object.assign({}, x, up) : x;
+          });
+        }
+        toast(banned ? "已封禁该玩家" : "已解除封禁");
+        renderDetail();
+        renderPlayerTable();
+      })
+      .catch(function (e) {
+        toast(e.message);
+      });
+  }
+
+  function resetPlayer(p) {
+    if (!window.confirm("将把「" + (p["昵称"] || p["编号"]) + "」的全部可编辑属性恢复为初始值，背包道具不受影响。此操作不可撤销，确认继续？")) return;
+    apiPost("/player/reset", { id: p.id })
+      .then(function (d) {
+        if (d && d["玩家"]) SELDATA["玩家"] = d["玩家"];
+        toast("玩家数据已重置");
+        return apiGet("/player", { id: p.id }).then(function (dd) {
+          SELDATA = dd || SELDATA;
+          renderDetail();
+          loadPlayers();
+        });
+      })
+      .catch(function (e) {
+        toast(e.message);
+      });
+  }
+
+  function loadTitles() {
+    return apiGet("/titles")
+      .then(function (d) {
+        TITLES = (d && d.list) || [];
+      })
+      .catch(function () {
+        TITLES = [];
+      });
+  }
+
+  function renderTitles() {
+    $("ttCount").textContent = TITLES.length + " 个";
+    if (!TITLES.length) {
+      $("ttTable").innerHTML = emptyHtml("暂无称号数据");
+      return;
+    }
+    var rows = TITLES.map(function (t) {
+      var name = String(t["名"] || "—");
+      var rar = String(t["稀有度"] || "");
+      return (
+        "<tr>" +
+        '<td><span class="xjl-title-name">' + esc(name) + "</span></td>" +
+        '<td><span class="xjl-badge" style="' + rarityStyle(rar) + '">' + esc(rar || "—") + "</span></td>" +
+        "<td>" + effectTagsHtml(t["效果"]) + "</td>" +
+        '<td class="xjl-wrap" style="color:#64748b">' + esc(t["说明"] || "—") + "</td>" +
+        "</tr>"
+      );
+    });
+    $("ttTable").innerHTML =
+      '<div class="xjl-table-wrap" style="max-height:56vh"><table class="xjl-table min"><thead><tr>' +
+      '<th style="width:120px">称号</th><th style="width:92px">稀有度</th><th>效果</th><th>说明</th>' +
+      "</tr></thead><tbody>" +
+      rows.join("") +
+      "</tbody></table></div>";
+  }
+
+  /* ============================================================
+   * 2.9.8（需求 1）词条激活面板
+   *   GET  /titles/state  → 全部词条键（含类型 / 上限 / 说明）+ 各玩家已激活情况
+   *   POST /titles/grant  → 激活（可多条）
+   *   POST /titles/revoke → 撤销（可多条）
+   *   三个接口都在后端的 token 守卫后面，无 token → 401 → request() 自动踢回登录页
+   * ============================================================ */
+  function entriesKeys() {
+    if (ENTRIES && Array.isArray(ENTRIES["键表"])) return ENTRIES["键表"];
+    return [];
+  }
+  function entriesPlayerMap() {
+    var map = {};
+    var all = PLAYERS || [];
+    for (var i = 0; i < all.length; i++) if (all[i] && all[i]["openid"]) map[String(all[i]["openid"])] = all[i];
+    return map;
+  }
+  function entryActivated(openid) {
+    var list = (ENTRIES && Array.isArray(ENTRIES["玩家"])) ? ENTRIES["玩家"] : [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && String(list[i]["openid"]) === String(openid)) return list[i]["激活"] || {};
+    }
+    return {};
+  }
+  function renderEntries() {
+    var keys = entriesKeys();
+    $("enCount").textContent = keys.length + " 条";
+    if (!keys.length) { $("enList").innerHTML = emptyHtml("暂无词条数据"); return; }
+    var act = entryActivated(ENTRY_SEL);
+    var pmap = entriesPlayerMap();
+    var html = keys.map(function (k) {
+      var key = String(k["键"] || "");
+      var on = Object.prototype.hasOwnProperty.call(act, key);
+      var val = on ? Number(act[key]) || 0 : "";
+      return (
+        '<label style="display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:10px;' +
+        (on ? "background:rgba(5,150,105,.10)" : "background:rgba(100,116,139,.07)") + ";margin-bottom:6px>" +
+        '<input type="checkbox" data-entry="' + esc(key) + '"' + (ENTRY_PICK[key] ? " checked" : "") + " />" +
+        '<span style="min-width:0">' +
+        '<b>' + esc(key) + "</b> " +
+        (on ? '<span class="xjl-badge ok">已激活 ' + esc(String(val)) + "%</span>" : '<span class="xjl-badge plain">未激活</span>') +
+        '<br><span style="color:#64748b;font-size:12px">' + esc(k["类型"] || "") + " · 上限 " + esc(String(k["上限"] ?? "")) +
+        (k["说明"] ? " · " + esc(String(k["说明"] === undefined || k["说明"] === null ? "" : k["说明"])) : "") + "</span>" +
+        "</span></label>"
+      );
+    }).join("");
+    $("enList").innerHTML = html;
+    var boxes = $("enList").querySelectorAll("input[data-entry]");
+    for (var i = 0; i < boxes.length; i++) {
+      boxes[i].onchange = function () {
+        ENTRY_PICK[this.getAttribute("data-entry")] = !!this.checked;
+      };
+    }
+  }
+  function renderEntryState() {
+    var list = (ENTRIES && Array.isArray(ENTRIES["玩家"])) ? ENTRIES["玩家"] : [];
+    if (!list.length) { $("enState").innerHTML = emptyHtml("暂无玩家被手动激活词条"); return; }
+    var pmap = entriesPlayerMap();
+    var html = list.map(function (x) {
+      var act = x["激活"] || {};
+      var parts = Object.keys(act).map(function (k) { return esc(k) + " " + esc(String(Number(act[k]) || 0)) + "%"; });
+      var nick = (pmap[String(x["openid"])] && pmap[String(x["openid"])]["昵称"]) || x["昵称"] || "无名";
+      return (
+        '<div style="padding:8px 10px;border-radius:10px;background:rgba(100,116,139,.07);margin-bottom:6px">' +
+        "<b>#" + esc(String(x["编号"] || "—")) + "</b> " + esc(String(nick)) +
+        '<br><span style="color:#64748b;font-size:12px">' + parts.join(" · ") + "</span>" +
+        "</div>"
+      );
+    }).join("");
+    $("enState").innerHTML = html;
+  }
+  function renderEntryPlayers() {
+    var sel = $("enPlayer");
+    var list = PLAYERS || [];
+    var keep = ENTRY_SEL;
+    var opts = list.map(function (p) {
+      return '<option value="' + esc(String(p["openid"])) + '">#' + esc(String(p["编号"] || "—")) + " " + esc(String(p["昵称"] || "无名")) + "</option>";
+    }).join("");
+    sel.innerHTML = opts || '<option value="">（暂无玩家）</option>';
+    if (keep) sel.value = keep;
+    if (!sel.value && list.length) sel.value = String(list[0]["openid"]);
+    ENTRY_SEL = sel.value || "";
+  }
+  function loadEntries() {
+    $("enList").innerHTML = loadingHtml("加载词条…");
+    $("enState").innerHTML = "";
+    return apiGet("/players", { limit: 1000 })
+      .then(function (d) {
+        PLAYERS = (d && d.list) || [];
+        renderEntryPlayers();
+        return apiGet("/titles/state");
+      })
+      .then(function (d) {
+        ENTRIES = d || {};
+        $("enErr").hidden = true;
+        renderEntries();
+        renderEntryState();
+      })
+      .catch(function (e) {
+        $("enList").innerHTML = "";
+        $("enErr").hidden = false;
+        $("enErr").textContent = e.message;
+        toast(e.message);
+      });
+  }
+  function entryAct(verb) {
+    var keys = Object.keys(ENTRY_PICK).filter(function (k) { return ENTRY_PICK[k]; });
+    if (!ENTRY_SEL) { toast("请先选择玩家"); return; }
+    if (!keys.length) { toast("请先勾选词条"); return; }
+    var path = verb === "revoke" ? "/titles/revoke" : "/titles/grant";
+    var body = { player: ENTRY_SEL, 词条: keys };
+    if (verb !== "revoke") {
+      var v = String($("enValue").value || "").trim();
+      if (v) body.value = v;
+    }
+    $("enErr").hidden = true;
+    apiPost(path, body)
+      .then(function () {
+        ENTRY_PICK = {};
+        toast(verb === "revoke" ? "已撤销 " + keys.length + " 条" : "已激活 " + keys.length + " 条");
+        return loadEntries();
+      })
+      .catch(function (e) {
+        $("enErr").hidden = false;
+        $("enErr").textContent = e.message;
+        toast(e.message);
+      });
+  }
+
+  function loadServer() {
+    $("srvStats").innerHTML = loadingHtml();
+    apiGet("/server")
+      .then(function (d) {
+        SERVER = d || {};
+        var n = Number(SERVER["倍率"]);
+        SERVER_VAL = isFinite(n) && n > 0 ? Math.round(n * 10) / 10 : 1;
+        $("srvErr").hidden = true;
+        renderServer();
+      })
+      .catch(function (e) {
+        $("srvStats").innerHTML = "";
+        $("srvErr").hidden = false;
+        $("srvErr").textContent = e.message;
+        toast(e.message);
+        renderServer();
+      });
+    if (!TITLES.length) loadTitles().then(renderTitles);
+    else renderTitles();
+  }
+
+  function renderServer() {
+    var on = SERVER_VAL > 1;
+    $("srvBig").className = "xjl-mult-big" + (on ? "" : " off");
+    $("srvBig").innerHTML = "×" + SERVER_VAL.toFixed(1) + "<small>" + (on ? "全服奖励" : "无加成") + "</small>";
+    $("srvState").className = "xjl-badge " + (on ? "ok" : "plain");
+    $("srvState").textContent = on ? "生效中" : "未开启";
+    $("srvRange").value = String(SERVER_VAL);
+    $("srvNum").value = SERVER_VAL.toFixed(1);
+    var qs = $("srvQuick").querySelectorAll("[data-quick]");
+    for (var i = 0; i < qs.length; i++) {
+      var q = Number(qs[i].getAttribute("data-quick"));
+      qs[i].className = Math.abs(SERVER_VAL - q) < 0.001 ? "active" : "";
+    }
+    $("srvNote").textContent =
+      (SERVER && SERVER["倍率说明"]) || "作用于所有玩家的副本 / BOSS / 天下楼结算奖励（经验、星羽、金币、星核、掉落数量）。";
+    $("srvAt").textContent = "上次生效时间：" + ((SERVER && SERVER["倍率生效时间"]) || "未记录");
+    $("srvStats").innerHTML = [
+      statHtml("当前倍率", "×" + SERVER_VAL.toFixed(1), on ? "结算奖励已加成" : "未开启加成"),
+      statHtml("作用范围", "全服", "副本 / BOSS / 天下楼"),
+      statHtml("生效时机", "结算时", "保存后下一次结算生效")
+    ].join("");
+  }
+
+  function setServerVal(v) {
+    var n = Number(v);
+    if (!isFinite(n)) return;
+    n = Math.round(n * 10) / 10;
+    if (n < 1) n = 1;
+    if (n > 2) n = 2;
+    SERVER_VAL = n;
+    renderServer();
+  }
+
+  function saveServer() {
+    var v = Math.round(Number(SERVER_VAL) * 10) / 10;
+    if (!isFinite(v) || !(v === 1 || (v >= 1.1 && v <= 2))) {
+      toast("倍率只能是 1.0（关闭）或 1.1 ~ 2.0");
+      return;
+    }
+    var ask = v > 1 ? "全服奖励 ×" + v.toFixed(1) + " 将于结算时生效。" : "保存后关闭全服奖励加成（×1.0）。";
+    if (
+      !window.confirm(
+        ask +
+          "\n作用于所有玩家的副本 / BOSS / 天下楼结算奖励（经验、星羽、金币、星核、掉落数量）。\n\n确认保存？"
+      )
+    )
+      return;
+    var btn = $("srvSave");
+    if (btn) btn.disabled = true;
+    apiPost("/server/multiplier", { "倍率": v })
+      .then(function (d) {
+        var n = Number(d && d["倍率"]);
+        SERVER_VAL = isFinite(n) && n > 0 ? Math.round(n * 10) / 10 : v;
+        SERVER = Object.assign({}, SERVER || {}, {
+          "倍率": SERVER_VAL,
+          "倍率生效时间": (d && d["倍率生效时间"]) || new Date().toLocaleString("zh-CN")
+        });
+        renderServer();
+        toast(v > 1 ? "全服倍率已设为 ×" + v.toFixed(1) + "，将于结算时生效" : "已关闭全服奖励加成");
+        return loadServer();
+      })
+      .catch(function (e) {
+        $("srvErr").hidden = false;
+        $("srvErr").textContent = e.message;
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("srvSave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  function loadOwners() {
+    $("owList").innerHTML = loadingHtml();
+    apiGet("/owners")
+      .then(function (d) {
+        OWNERS = d || {};
+        renderOwners();
+      })
+      .catch(function (e) {
+        $("owList").innerHTML = emptyHtml("读取主人列表失败") + errHtml(e.message);
+      });
+  }
+
+  function renderOwners() {
+    var high = (OWNERS && OWNERS["最高权限者"]) || (META && META["最高权限者"]) || "";
+    var list = (OWNERS && OWNERS["主人"]) || [];
+    $("owHigh").textContent = high || "未配置";
+    $("owHigh").title = high;
+    $("owCount").textContent = list.length + " 位";
+    if (!list.length) {
+      $("owList").innerHTML = emptyHtml("暂无其他主人");
+      return;
+    }
+    $("owList").innerHTML = '<div class="xjl-list">' +
+      list
+        .map(function (id) {
+          return (
+            '<div class="xjl-owner-row"><span class="xjl-owner-id" title="' + esc(id) + '">' + esc(id) + "</span>" +
+            '<button type="button" class="xjl-btn xjl-sm xjl-danger" data-remove="' + esc(id) + '">移除</button></div>'
+          );
+        })
+        .join("") +
+      "</div>";
+    var btns = $("owList").querySelectorAll("[data-remove]");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].onclick = function () {
+        var id = this.getAttribute("data-remove");
+        if (!window.confirm("确认将 openid " + id + " 从主人名单中移除？")) return;
+        ownerAct(id, "remove");
+      };
+    }
+  }
+
+  function ownerAct(id, action) {
+    var target = String(id || "").trim();
+    if (!target) {
+      toast("请输入 openid");
+      return;
+    }
+    apiPost("/owners", { id: target, action: action })
+      .then(function (d) {
+        if (d) OWNERS = { "最高权限者": d["最高权限者"], "主人": d["主人"] || [] };
+        if (action === "add") $("owInput").value = "";
+        toast(action === "add" ? "已添加主人" : "已移除主人");
+        renderOwners();
+      })
+      .catch(function (e) {
+        toast(e.message);
+      });
+  }
+
+  function loadLogs() {
+    $("lgTable").innerHTML = loadingHtml();
+    apiGet("/logs")
+      .then(function (d) {
+        LOGS = d || {};
+        renderLogs();
+      })
+      .catch(function (e) {
+        $("lgTable").innerHTML = emptyHtml("读取日志失败") + errHtml(e.message);
+      });
+  }
+
+  function renderLogs() {
+    var logs = (LOGS && LOGS["日志"]) || [];
+    var notices = (LOGS && LOGS["公告"]) || [];
+    if (!logs.length) {
+      $("lgTable").innerHTML = emptyHtml("暂无管理日志");
+    } else {
+      $("lgTable").innerHTML =
+        '<div class="xjl-table-wrap" style="max-height:64vh"><table class="xjl-table min"><thead><tr>' +
+        '<th style="width:132px">时间</th><th style="width:88px">操作者</th><th>内容</th></tr></thead><tbody>' +
+        logs
+          .map(function (lg) {
+            return (
+              '<tr><td class="xjl-mono">' + esc(lg["时间"] || "—") + "</td><td>" + esc(lg["操作者"] || "系统") +
+              '</td><td class="xjl-wrap">' + esc(lg["内容"] || "") + "</td></tr>"
+            );
+          })
+          .join("") +
+        "</tbody></table></div>";
+    }
+    $("lgNotices").innerHTML = notices.length
+      ? '<div class="xjl-list" style="max-height:300px">' +
+        notices
+          .map(function (n) {
+            return '<div class="xjl-log-row"><div class="xjl-log-top"><span>' + esc(n["时间"] || "—") + '</span></div><div class="xjl-log-text">' + esc(n["内容"] || "") + "</div></div>";
+          })
+          .join("") +
+        "</div>"
+      : emptyHtml("暂无公告");
+  }
+
+  function publishNotice() {
+    var text = String($("lgText").value || "").trim();
+    if (!text) {
+      toast("公告内容不能为空");
+      return;
+    }
+    var btn = $("lgSend");
+    btn.disabled = true;
+    apiPost("/announce", { text: text })
+      .then(function () {
+        $("lgText").value = "";
+        toast("公告已发布");
+        loadLogs();
+      })
+      .catch(function (e) {
+        $("lgErr").hidden = false;
+        $("lgErr").textContent = e.message;
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("lgSend");
+        if (b) b.disabled = false;
+      });
+  }
+
+  // 2.9.3：常驻公告（每条回复「响应用时」下方的灰字，留空关闭，最多 5 行）
+  function stickyLines(v) {
+    var s = String(v || "").replace(/\r\n?/g, "\n").trim();
+    return s ? s.split("\n").length : 0;
+  }
+
+  function renderStickyState() {
+    var n = stickyLines($("lgSticky").value);
+    if ($("lgStickyCount")) $("lgStickyCount").textContent = n + "/5 行";
+    if ($("lgStickyState")) $("lgStickyState").textContent = n ? "当前已开启" : "当前已关闭（留空即关闭）";
+  }
+
+  function loadSticky() {
+    apiGet("/config")
+      .then(function (d) {
+        var c = (d && d["配置"]) || {};
+        $("lgSticky").value = String(c["常驻公告"] || "");
+        renderStickyState();
+      })
+      .catch(function () {
+        renderStickyState();
+      });
+  }
+
+  function saveSticky() {
+    var s = String($("lgSticky").value || "").replace(/\r\n?/g, "\n");
+    var n = stickyLines(s);
+    var err = $("lgStickyErr");
+    if (n > 5) {
+      err.hidden = false;
+      err.textContent = "常驻公告最多 5 行（当前 " + n + " 行）";
+      return;
+    }
+    err.hidden = true;
+    var btn = $("lgStickySave");
+    btn.disabled = true;
+    apiPost("/announce/sticky", { "文本": s })
+      .then(function (d) {
+        $("lgSticky").value = String((d && d["常驻公告"]) || "");
+        renderStickyState();
+        toast(n ? "常驻公告已保存" : "常驻公告已关闭");
+      })
+      .catch(function (e) {
+        err.hidden = false;
+        err.textContent = e.message;
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("lgStickySave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  // ====================== 扩展面板（后端字段缺失时自动隐藏对应内容） ======================
+  function kvRowsFrom(obj, skip) {
+    var src = obj && typeof obj === "object" ? obj : {};
+    var out = [];
+    for (var k in src) {
+      if (!Object.prototype.hasOwnProperty.call(src, k)) continue;
+      if (skip && skip.indexOf(k) >= 0) continue;
+      var v = src[k];
+      if (v === undefined || v === null || typeof v === "object") continue;
+      out.push([k, typeof v === "number" ? fmt(v) : String(v)]);
+    }
+    return out;
+  }
+
+  function kvCardHtml(title, rows, badge) {
+    if (!rows || !rows.length) return "";
+    return (
+      '<div class="xjl-card"><h3>' + esc(title) + (badge ? ' <span class="xjl-badge warn">' + esc(badge) + "</span>" : "") + "</h3>" +
+      '<div class="xjl-kv">' + kvHtml(rows) + "</div></div>"
+    );
+  }
+
+  // 通用表格：列名取自前几行数据的键并集；对象值显示 —；cap 控制行数上限
+  function genericTableHtml(rows, cap) {
+    var list = (Array.isArray(rows) ? rows : []).slice(0, cap || 20);
+    if (!list.length) return emptyHtml("暂无数据");
+    var cols = [];
+    var seen = {};
+    for (var i = 0; i < Math.min(list.length, 5); i++) {
+      var row = list[i] || {};
+      for (var k in row) {
+        if (!Object.prototype.hasOwnProperty.call(row, k)) continue;
+        if (!seen[k]) {
+          seen[k] = 1;
+          cols.push(k);
+        }
+      }
+    }
+    function isText(c) {
+      return c === "昵称" || c === "名称" || c === "openid" || c === "id";
+    }
+    var head = cols
+      .map(function (c) {
+        return "<th" + (isText(c) ? "" : ' style="text-align:right"') + ">" + esc(c) + "</th>";
+      })
+      .join("");
+    var body = list
+      .map(function (row) {
+        return (
+          "<tr>" +
+          cols
+            .map(function (c) {
+              var v = row ? row[c] : undefined;
+              var text = v === undefined || v === null || v === "" || typeof v === "object" ? "—" : typeof v === "number" ? fmt(v) : String(v);
+              return "<td" + (isText(c) ? "" : ' class="xjl-num"') + ">" + esc(text) + "</td>";
+            })
+            .join("") +
+          "</tr>"
+        );
+      })
+      .join("");
+    return '<div class="xjl-table-wrap"><table class="xjl-table min"><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  }
+
+  // 玩法配置：GET /economy 返回什么展示什么（倍率 / 赌场赢输上限 / 农场参数…缺字段隐藏）
+  function loadEconomy() {
+    var body = $("ecoBody");
+    body.innerHTML = loadingHtml();
+    apiGet("/economy")
+      .then(function (d) {
+        var data = d || null;
+        var casino = data && typeof data["赌场"] === "object" ? data["赌场"] : null;
+        var farm = data && typeof data["农场"] === "object" ? data["农场"] : null;
+        var top = kvRowsFrom(data, ["赌场", "农场"]);
+        var html = kvCardHtml("通用参数", top);
+        if (casino) {
+          html += kvCardHtml("赌场", kvRowsFrom(casino), "只读");
+          html += '<div class="xjl-card"><p class="xjl-hint">今日赢 / 输上限由插件配置解锁，网页端仅展示当前进度，不提供修改入口。</p></div>';
+        }
+        if (farm) html += kvCardHtml("农场参数", kvRowsFrom(farm));
+        body.innerHTML = html || emptyHtml("后端暂未提供 /economy 接口，内容自动隐藏");
+      })
+      .catch(function (e) {
+        body.innerHTML = emptyHtml("后端暂未提供 /economy 接口，内容自动隐藏") + errHtml(e.message);
+      });
+  }
+
+  // 活跃统计：GET /activity（最近 24h），小时曲线 / 汇总数字 / 用户列表，缺啥隐藏
+  function loadActivity() {
+    $("actStats").innerHTML = loadingHtml();
+    $("actChartWrap").hidden = true;
+    $("actListWrap").hidden = true;
+    apiGet("/activity")
+      .then(function (d) {
+        var data = d || null;
+        var stats = kvRowsFrom(data, ["小时", "列表", "list", "用户", "users"]);
+        $("actStats").innerHTML = stats.length
+          ? stats
+              .slice(0, 8)
+              .map(function (r) {
+                return statHtml(r[0], r[1], "");
+              })
+              .join("")
+          : "";
+        var hours = data && Array.isArray(data["小时"]) ? data["小时"] : null;
+        if (hours) {
+          $("actChartWrap").hidden = false;
+          $("actChart").innerHTML = chartHtml(hours);
+        }
+        var list = data
+          ? Array.isArray(data["列表"])
+            ? data["列表"]
+            : Array.isArray(data.list)
+              ? data.list
+              : Array.isArray(data["用户"])
+                ? data["用户"]
+                : null
+          : null;
+        if (list && list.length) {
+          $("actListWrap").hidden = false;
+          $("actCount").textContent = list.length + " 条";
+          $("actList").innerHTML = genericTableHtml(list, 50);
+        }
+        if (!stats.length && !hours && !(list && list.length)) {
+          $("actStats").innerHTML = emptyHtml("后端暂未提供 /activity 接口，内容自动隐藏");
+        }
+      })
+      .catch(function (e) {
+        $("actStats").innerHTML = emptyHtml("后端暂未提供 /activity 接口，内容自动隐藏");
+        toast(e.message);
+      });
+  }
+
+  // 农场总览：GET /farm Top20 表格
+  function loadFarm() {
+    $("fmBody").innerHTML = loadingHtml();
+    apiGet("/farm")
+      .then(function (d) {
+        var list = null;
+        if (Array.isArray(d)) list = d;
+        else if (d && Array.isArray(d["榜单"])) list = d["榜单"];
+        else if (d && Array.isArray(d.list)) list = d.list;
+        else if (d && Array.isArray(d["玩家"])) list = d["玩家"];
+        if (!list || !list.length) {
+          $("fmBody").innerHTML = emptyHtml("后端暂未提供 /farm 接口，内容自动隐藏");
+          return;
+        }
+        $("fmBody").innerHTML =
+          '<h3 style="padding:4px 4px 0">农场排行 <span class="xjl-badge plain">' + Math.min(list.length, 20) + " 名</span></h3>" + genericTableHtml(list, 20);
+      })
+      .catch(function (e) {
+        $("fmBody").innerHTML = emptyHtml("后端暂未提供 /farm 接口，内容自动隐藏") + errHtml(e.message);
+      });
+  }
+
+  function loadConfig() {
+    $("cfSharp").innerHTML = loadingHtml();
+    apiGet("/config")
+      .then(function (d) {
+        CONF = (d && d["配置"]) || {};
+        SHARP = (d && d.sharp) || null;
+        renderConfig();
+      })
+      .catch(function (e) {
+        $("cfSharp").innerHTML = "";
+        $("cfErr").hidden = false;
+        $("cfErr").textContent = e.message;
+      });
+  }
+
+  function renderConfig() {
+    if (!CONF) CONF = {};
+    $("cfImg").className = "xjl-switch" + (CONF["图片渲染"] ? " on" : "");
+    $("cfDebug").className = "xjl-switch" + (CONF["调试"] ? " on" : "");
+    $("cfMode").value = CONF["渲染模式"] || "markdown";
+    if ($("cfMode").value !== (CONF["渲染模式"] || "markdown")) {
+      var opt = document.createElement("option");
+      opt.value = CONF["渲染模式"];
+      opt.textContent = CONF["渲染模式"];
+      $("cfMode").appendChild(opt);
+      $("cfMode").value = CONF["渲染模式"];
+    }
+    $("cfNote").value = CONF["备注"] || "";
+    $("cfSharp").innerHTML = kvHtml([
+      ["状态", SHARP && SHARP["已安装"] ? "已安装" : "未安装"],
+      ["版本", (SHARP && SHARP["版本"]) || "—"],
+      ["目录", (SHARP && SHARP["目录"]) || "—"]
+    ]);
+    $("cfSharpHint").textContent = SHARP && SHARP["已安装"]
+      ? "sharp 已就绪，图片渲染功能可正常使用。"
+      : "未检测到 sharp 时，插件会自动降级为纯文本输出；安装请使用主人指令或在控制台执行依赖安装。";
+  }
+
+  function saveConfig() {
+    if (!CONF) CONF = {};
+    var btn = $("cfSave");
+    btn.disabled = true;
+    apiPost("/config", {
+      "图片渲染": !!CONF["图片渲染"],
+      "渲染模式": String($("cfMode").value || ""),
+      "调试": !!CONF["调试"],
+      "备注": String($("cfNote").value || "")
+    })
+      .then(function (d) {
+        if (d && d["配置"]) CONF = d["配置"];
+        toast("配置已保存");
+        renderConfig();
+      })
+      .catch(function (e) {
+        $("cfErr").hidden = false;
+        $("cfErr").textContent = e.message;
+        toast(e.message);
+      })
+      .then(function () {
+        var b = $("cfSave");
+        if (b) b.disabled = false;
+      });
+  }
+
+  // ====================== 登录门 ======================
+  var FORCE_CHANGE = false;
+
+  function setErrLine(id, msg) {
+    var el = $(id);
+    el.hidden = !msg;
+    el.textContent = msg || "";
+  }
+
+  function showGate(mode) {
+    $("authGate").hidden = false;
+    $("authLoginForm").hidden = mode !== "login";
+    $("authChangeForm").hidden = mode !== "change";
+    if (mode === "login") {
+      $("authPwd").value = "";
+      setTimeout(function () {
+        $("authPwd").focus();
+      }, 0);
+    }
+  }
+
+  function hideGate() {
+    $("authGate").hidden = true;
+  }
+
+  function renderChecks() {
+    var v = String($("cpNew").value || "");
+    var html = "";
+    for (var i = 0; i < PWD_RULES.length; i++) {
+      var ok = PWD_RULES[i][1](v);
+      html += '<span class="' + (ok ? "ok" : "") + '">' + (ok ? "✓" : "○") + " " + esc(PWD_RULES[i][0]) + "</span>";
+    }
+    $("cpChecks").innerHTML = html;
+    setErrLine("cpErr", $("cpConfirm").value && $("cpNew").value !== $("cpConfirm").value ? "两次输入的密码不一致" : "");
+  }
+
+  function openChangeDialog(forced) {
+    FORCE_CHANGE = !!forced;
+    $("cpSub").textContent = forced ? "首次登录必须修改密码" : "change password";
+    $("cpForcedHint").hidden = !forced;
+    $("cpCancel").hidden = !!forced;
+    $("cpOld").value = forced ? INITIAL_PASSWORD : "";
+    $("cpNew").value = "";
+    $("cpConfirm").value = "";
+    setErrLine("cpErr", "");
+    renderChecks();
+    showGate("change");
+    setTimeout(function () {
+      $(forced ? "cpNew" : "cpOld").focus();
+    }, 0);
+  }
+
+  function doLogin(e) {
+    e.preventDefault();
+    var pwd = String($("authPwd").value || "");
+    if (!pwd) {
+      setErrLine("authErr", "请输入密码");
+      return;
+    }
+    var btn = $("authSubmit");
+    btn.disabled = true;
+    btn.textContent = "登录中…";
+    setErrLine("authErr", "");
+    requestLogin(pwd)
+      .then(function (r) {
+        writeAuth(r.token, r.expiresAt);
+        // 后端给了「需改密」标志就按它来；没给则按「当前密码等于初始密码」兜底
+        if (r.needChange || pwd === INITIAL_PASSWORD) openChangeDialog(true);
+        else {
+          FORCE_CHANGE = false;
+          hideGate();
+          startConsole();
+        }
+      })
+      .catch(function (err) {
+        setErrLine("authErr", err && err.message ? err.message : "后端未就绪，请稍后再试");
+      })
+      .then(function () {
+        btn.disabled = false;
+        btn.textContent = "登录";
+      });
+  }
+
+  function doChange(e) {
+    e.preventDefault();
+    var oldPwd = String($("cpOld").value || "");
+    var nw = String($("cpNew").value || "");
+    var cf = String($("cpConfirm").value || "");
+    var issues = pwdIssues(nw);
+    if (issues.length) {
+      setErrLine("cpErr", "新密码缺少：" + issues.join("、"));
+      return;
+    }
+    if (nw !== cf) {
+      setErrLine("cpErr", "两次输入的密码不一致");
+      return;
+    }
+    if (nw === oldPwd) {
+      setErrLine("cpErr", "新密码不能与旧密码相同");
+      return;
+    }
+    var btn = $("cpSubmit");
+    btn.disabled = true;
+    btn.textContent = "提交中…";
+    setErrLine("cpErr", "");
+    requestChangePassword(oldPwd, nw)
+      .then(function () {
+        FORCE_CHANGE = false;
+        toast("密码已修改，请牢记新密码");
+        hideGate();
+        startConsole();
+      })
+      .catch(function (err) {
+        setErrLine("cpErr", err && err.message ? err.message : "修改失败，请稍后再试");
+      })
+      .then(function () {
+        btn.disabled = false;
+        btn.textContent = "确认修改";
+      });
+  }
+
+  /* ============================================================
+   * 2.9.9（需求 G/H）系统管理 + 指令列表
+   * ============================================================ */
+  var RATES = null;
+  function loadManage() {
+    $("mgRates").innerHTML = loadingHtml("加载倍率…");
+    apiGet("/server/rates")
+      .then(function (d) {
+        RATES = (d && d["倍率"]) || {};
+        var html = "";
+        var keys = ["经验", "星羽", "金币", "星核", "掉落"];
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          html += '<label class="xjl-field" style="display:flex;gap:8px;align-items:center;margin-bottom:6px">' + esc(k) +
+            '　<input class="xjl-input" type="number" step="0.1" min="0.5" max="5" data-rate="' + esc(k) + '" value="' + esc(String(RATES[k] != null ? RATES[k] : 1)) + '" style="width:110px" /></label>';
+        }
+        html += '<span class="xjl-hint">' + esc(String((d && d["说明"]) || "")) + " · 当前全服倍率 ×" + esc(String((d && d["全服倍率"]) || 1)) + "</span>";
+        $("mgRates").innerHTML = html;
+      })
+      .catch(function (e) { $("mgRates").innerHTML = emptyHtml(e.message); toast(e.message); });
+    loadFund();
+    loadStocks();
+  }
+  function loadFund() {
+    apiGet("/server")
+      .then(function (d) {
+        $("mgFundNow").textContent = "当前世界资金：" + fmt((d && d["世界资金"]) || 0) + " 星羽";
+      })
+      .catch(function () { $("mgFundNow").textContent = "读取失败"; });
+  }
+  /* 2.9.10（需求 1）股票价格上下限（管理接口 GET /stocks / POST /stocks/bounds，需 token） */
+  function loadStocks() {
+    $("mgStocks").innerHTML = loadingHtml("加载股票行情…");
+    apiGet("/stocks")
+      .then(function (d) {
+        var list = (d && d["股票"]) || [];
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+          var s = list[i];
+          html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;padding:6px 8px;border-radius:8px;background:rgba(100,116,139,.07)">' +
+            '<b style="min-width:190px">' + esc(s["名"] || "") + "（" + esc(String(s["代码"] || "")) + "）现价 " + fmt(s["价"] || 0) + "</b>" +
+            '<label class="xjl-field">上限<input class="xjl-input" type="number" min="0" data-stock="' + esc(String(s["代码"] || "")) + '" data-b="上限" value="' + (s["上限"] ? esc(String(s["上限"])) : "") + '" placeholder="不限" style="width:100px" /></label>' +
+            '<label class="xjl-field">下限<input class="xjl-input" type="number" min="0" data-stock="' + esc(String(s["代码"] || "")) + '" data-b="下限" value="' + (s["下限"] ? esc(String(s["下限"])) : "") + '" placeholder="不限" style="width:100px" /></label>' +
+            '<button type="button" class="xjl-btn xjl-ghost" data-stocksave="' + esc(String(s["代码"] || "")) + '">保存</button>' +
+            "</div>";
+        }
+        $("mgStocks").innerHTML = html || emptyHtml("暂无股票数据");
+      })
+      .catch(function (e) { $("mgStocks").innerHTML = emptyHtml(e.message); toast(e.message); });
+  }
+  function saveStockBounds(code) {
+    var up = null, dn = null;
+    var inputs = $("mgStocks").querySelectorAll('input[data-stock="' + code + '"]');
+    for (var i = 0; i < inputs.length; i++) {
+      var raw = String(inputs[i].value || "").trim();
+      var v = (raw === "" || !isFinite(Number(raw))) ? 0 : Math.floor(Number(raw));
+      if (v < 0) v = 0;
+      if (inputs[i].getAttribute("data-b") === "上限") up = v; else dn = v;
+    }
+    var body = { "股": code };
+    if (up !== null) body["上限"] = up;
+    if (dn !== null) body["下限"] = dn;
+    apiPost("/stocks/bounds", body)
+      .then(function (d) { toast("已保存 " + ((d && d["名"]) || code) + " 上下限（0 = 不限）"); loadStocks(); })
+      .catch(function (e) { toast(e.message); });
+  }
+  function saveRates(vals) {
+    apiPost("/server/rates", vals)
+      .then(function (d) {
+        toast(vals["双倍"] ? "已开启双倍活动（全部 ×2）" : "倍率已保存");
+        loadManage();
+      })
+      .catch(function (e) { toast(e.message); });
+  }
+  function collectRates() {
+    var inputs = $("mgRates").querySelectorAll("input[data-rate]");
+    var out = {};
+    for (var i = 0; i < inputs.length; i++) {
+      var v = Number(inputs[i].value);
+      if (!isFinite(v)) { toast("倍率必须是数字"); return null; }
+      out[inputs[i].getAttribute("data-rate")] = v;
+    }
+    return out;
+  }
+  function loadCommands() {
+    $("cmdList").innerHTML = loadingHtml("加载指令…");
+    apiGet("/commands")
+      .then(function (d) {
+        var groups = (d && d["分组"]) || [];
+        var st = (d && d["统计"]) || {};
+        $("cmdTotal").textContent = st["分组数"] + " 组 · " + st["条目数"] + " 条指令";
+        var html = "";
+        for (var i = 0; i < groups.length; i++) {
+          html += '<div style="margin-bottom:14px"><b>' + esc(groups[i]["组"] || "") + "</b>";
+          var rows = groups[i]["条"] || [];
+          for (var j = 0; j < rows.length; j++) {
+            html += '<div style="padding:4px 8px;border-radius:8px;background:rgba(100,116,139,.07);margin-top:4px">' +
+              '<code style="font-weight:600">' + esc(rows[j][0] || "") + "</code>" +
+              '<span style="color:#64748b;font-size:12px">　' + esc(rows[j][1] || "") + "</span></div>";
+          }
+          html += "</div>";
+        }
+        $("cmdList").innerHTML = html || emptyHtml("暂无指令数据");
+      })
+      .catch(function (e) { $("cmdList").innerHTML = emptyHtml(e.message); toast(e.message); });
+  }
+  function bind() {
+    var navs = document.querySelectorAll(".xjl-nav-item[data-view]");
+    for (var i = 0; i < navs.length; i++) {
+      navs[i].onclick = function () {
+        switchView(this.getAttribute("data-view"));
+      };
+    }
+
+    $("acctChangePwd").onclick = function () {
+      openChangeDialog(false);
+    };
+    $("acctLogout").onclick = function () {
+      clearAuth();
+      FORCE_CHANGE = false;
+      showGate("login");
+    };
+    $("authLoginForm").onsubmit = doLogin;
+    $("authChangeForm").onsubmit = doChange;
+    $("cpCancel").onclick = function () {
+      if (!FORCE_CHANGE) hideGate();
+    };
+    $("cpNew").oninput = renderChecks;
+    $("cpConfirm").oninput = renderChecks;
+
+    var timer = 0;
+    $("plQ").oninput = function () {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(loadPlayers, 320);
+    };
+    $("plSort").onchange = loadPlayers;
+    $("plReload").onclick = loadPlayers;
+
+    $("owAdd").onclick = function () {
+      ownerAct($("owInput").value, "add");
+    };
+    $("owInput").onkeydown = function (e) {
+      if (e.key === "Enter") ownerAct($("owInput").value, "add");
+    };
+
+    $("lgSend").onclick = publishNotice;
+    $("lgClear").onclick = function () {
+      $("lgText").value = "";
+    };
+    $("lgStickySave").onclick = saveSticky;
+    $("lgStickyClear").onclick = function () {
+      $("lgSticky").value = "";
+      renderStickyState();
+    };
+    $("lgSticky").oninput = renderStickyState;
+
+    $("cfImg").onclick = function () {
+      if (!CONF) CONF = {};
+      CONF["图片渲染"] = !CONF["图片渲染"];
+      renderConfig();
+    };
+    $("cfDebug").onclick = function () {
+      if (!CONF) CONF = {};
+      CONF["调试"] = !CONF["调试"];
+      renderConfig();
+    };
+    $("cfSave").onclick = saveConfig;
+    $("cfReload").onclick = loadConfig;
+
+    $("srvReload").onclick = loadServer;
+    $("srvRange").oninput = function () {
+      setServerVal(this.value);
+    };
+    $("srvNum").onchange = function () {
+      setServerVal(this.value);
+    };
+    $("srvQuick").onclick = function (e) {
+      var t = e.target;
+      if (!t || typeof t.getAttribute !== "function") return;
+      var q = t.getAttribute("data-quick");
+      if (q !== null) setServerVal(q);
+    };
+    $("srvSave").onclick = saveServer;
+
+    // 2.9.9（需求 G/H）系统管理 + 指令列表
+    $("mgRatesSave").onclick = function () {
+      var v = collectRates();
+      if (v) saveRates(v);
+    };
+    $("mgDouble").onclick = function () {
+      saveRates({ "经验": 2, "星羽": 2, "金币": 2, "星核": 2, "掉落": 2, "双倍": true });
+    };
+    $("mgRatesReload").onclick = loadManage;
+    $("mgBulkSend").onclick = function () {
+      var btn = this;
+      btn.disabled = true;
+      var body = { "筛选": $("mgBulkFilter").value, "星羽": Number($("mgBulkCoin").value) || 0, "道具": String($("mgBulkItem").value || "").trim(), "数量": Number($("mgBulkCount").value) || 1 };
+      apiPost("/players/grant-bulk", body)
+        .then(function (d) {
+          $("mgBulkOut").textContent = "已发放 " + ((d && d["人数"]) || 0) + " 人";
+          toast("批量发奖完成：" + ((d && d["人数"]) || 0) + " 人");
+        })
+        .catch(function (e) { $("mgBulkOut").textContent = ""; toast(e.message); })
+        .then(function () { btn.disabled = false; });
+    };
+    $("mgFundSave").onclick = function () {
+      var v = Math.floor(Number($("mgFundAmt").value) || 0);
+      if (!v) { toast("金额不能为 0（正数增加 / 负数扣除）"); return; }
+      apiPost("/economy/fund", { "金额": v })
+        .then(function (d) { $("mgFundAmt").value = ""; toast("世界资金已调整：" + (d && d["世界资金"] != null ? fmt(d["世界资金"]) : "")); loadFund(); })
+        .catch(function (e) { toast(e.message); });
+    };
+    $("mgFundReload").onclick = loadFund;
+    $("mgStocks").onclick = function (e) {
+      var t = e.target;
+      if (!t || typeof t.getAttribute !== "function") return;
+      var code = t.getAttribute("data-stocksave");
+      if (code) saveStockBounds(code);
+    };
+    function doClean(label, target) {
+      apiPost("/system/cleanup", { "项": target })
+        .then(function (d) {
+          toast(label + "完成");
+          $("mgCleanOut").textContent = JSON.stringify((d && d["结果"]) || {});
+        })
+        .catch(function (e) { toast(e.message); });
+    }
+    $("mgCleanPvp").onclick = function () { doClean("PVP 残留清理", "pvp"); };
+    $("mgCleanFund").onclick = function () { doClean("旧基金档清零", "基金"); };
+    $("mgCleanSession").onclick = function () { doClean("控制台会话清空", "会话"); };
+    $("cmdReload").onclick = loadCommands;
+
+    $("baseInput").value = BASE;
+    $("baseSave").onclick = function () {
+      var v = String($("baseInput").value || "").trim().replace(/\/+$/, "");
+      try {
+        localStorage.setItem(STORE, v);
+      } catch (e) {}
+      BASE = v;
+      window.location.reload();
+    };
+  }
+
+  function startConsole() {
+    $("baseFoot").textContent = "接口：" + (BASE || "同源根");
+    $("baseFoot").title = BASE || "同源根";
+    loadMeta()
+      .then(loadTitles)
+      .then(function () {
+        switchView("overview");
+      });
+  }
+
+  function boot() {
+    bind();
+    $("ecoReload").onclick = loadEconomy;
+    $("actReload").onclick = loadActivity;
+    $("fmReload").onclick = loadFarm;
+    // 已有有效 token 直接进控制台（后端判定失效会以 401 自动踢回登录页）
+    if (readAuth()) {
+      hideGate();
+      startConsole();
+    } else {
+      showGate("login");
+    }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

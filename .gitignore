@@ -1,0 +1,14 @@
+# 插件仓库：仅上传插件本体（源码 + 文档 + 默认资源），排除运行数据
+# 运行数据（玩家题库、违禁昵称、缓存等）不入库
+data/tc/
+data/shu.jpg
+
+# 依赖 / 临时运行环境
+node_modules/
+runtime-deps/
+data/runtime/
+*.log
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
