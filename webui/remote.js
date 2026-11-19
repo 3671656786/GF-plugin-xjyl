@@ -885,32 +885,32 @@ function Overview({ api, toast }) {
           "div",
           { className: "xjl-card", style: { marginTop: 12 } },
           h("h3", null, "今日消息时段分布"),
-          h(HourChart, { hours: hours }),
-          h(
-            "div",
-            { className: "xjl-grid2", style: { marginTop: 12 } },
-            h(
-              "div",
-              { className: "xjl-stats", style: { marginBottom: 0 } },
-              h(Stat, { label: "今日消息", value: fmt(data.今日消息) }),
-              h(Stat, { label: "今日活跃", value: fmt(data.今日活跃), hint: "个用户" }),
-              h(Stat, { label: "今日群数", value: fmt(data.今日群数), hint: "个群" })
-            ),
-            h(
-              "div",
-              { className: "xjl-card", style: { boxShadow: "none", background: "rgba(255,255,255,.42)" } },
-              h("h3", null, "运行信息"),
-              h(
-                "div",
-                { className: "xjl-kv" },
-                h("div", null, h("span", null, "日期"), h("b", null, data.日期 || todayStr())),
-                h("div", null, h("span", null, "版本"), h("b", null, data.版本 || "—")),
-                h("div", null, h("span", null, "日志目录"), h("b", null, data.日志目录 || "—"))
-              )
-            )
-          )
+          h(HourChart, { hours: hours })
         )
-      : null,
+      : h(Loading, null),
+    h(
+      "div",
+      { className: "xjl-grid2", style: { marginTop: 12 } },
+      h(
+        "div",
+        { className: "xjl-stats", style: { marginBottom: 0 } },
+        h(Stat, { label: "今日消息", value: fmt(data && data.今日消息) }),
+        h(Stat, { label: "今日活跃", value: fmt(data && data.今日活跃), hint: "个用户" }),
+        h(Stat, { label: "今日群数", value: fmt(data && data.今日群数), hint: "个群" })
+      ),
+      h(
+        "div",
+        { className: "xjl-card", style: { boxShadow: "none", background: "rgba(255,255,255,.42)" } },
+        h("h3", null, "运行信息"),
+        h(
+          "div",
+          { className: "xjl-kv" },
+          h("div", null, h("span", null, "日期"), h("b", null, (data && data.日期) || todayStr())),
+          h("div", null, h("span", null, "版本"), h("b", null, (data && data.版本) || "—")),
+          h("div", null, h("span", null, "日志目录"), h("b", null, (data && data.日志目录) || "—"))
+        )
+      )
+    ),
     h(
       "div",
       { className: "xjl-toolbar", style: { marginTop: 12, marginBottom: 0 } },
