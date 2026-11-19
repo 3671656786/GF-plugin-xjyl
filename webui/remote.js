@@ -2624,6 +2624,12 @@ function Settings({ api, toast }) {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  // 3.1.8：GitHub API 令牌 —— 输入值单独存，不回显已保存的明文
+  const [令牌输入, set令牌输入] = useState("");
+  const [令牌可见, set令牌可见] = useState(false);
+  const [令牌状态, set令牌状态] = useState({ 已设置: false, 展示: "" });
+  const [令牌busy, set令牌busy] = useState(false);
+  const [令牌结果, set令牌结果] = useState("");
 
   const load = useCallback(() => {
     setLoading(true);
@@ -2633,6 +2639,10 @@ function Settings({ api, toast }) {
       .then((d) => {
         setConf((d && d.配置) || {});
         setSharp((d && d.sharp) || null);
+        set令牌状态({
+          已设置: !!(d && d.GitHub令牌已设置),
+          展示: String((d && d.GitHub令牌展示) || "")
+        });
       })
       .catch((e) => setErr(e && e.message ? e.message : String(e)))
       .finally(() => setLoading(false));
@@ -2660,6 +2670,31 @@ function Settings({ api, toast }) {
       })
       .catch((e) => toast(e && e.message ? e.message : String(e)))
       .finally(() => setBusy(false));
+  };
+
+  // 保存令牌（空 = 清除）
+  const saveToken = () => {
+    const v = String(令牌输入 || "").trim();
+    if (v && !/^gh[pousr]_[A-Za-z0-9]{20,}$/.test(v)) {
+      set令牌结果("❌ 格式不对：GitHub 令牌应以 ghp_ 或 github_pat_ 开头");
+      return;
+    }
+    set令牌busy(true);
+    set令牌结果("");
+    api
+      .post("/config", { GitHub令牌: v })
+      .then((d) => {
+        const 展示 = d && d.GitHub令牌已设置
+          ? String(d.GitHub令牌展示 || "")
+          : (v ? v.slice(0, 4) + "…" + v.slice(-4) : "");
+        set令牌状态({ 已设置: !!(d && d.GitHub令牌已设置) || !!v, 展示: 展示 });
+        set令牌输入("");
+        set令牌可见(false);
+        set令牌结果(v ? "✅ 已保存，额度提升到 5000 次/小时" : "🧹 已清除令牌，回到匿名 60 次/小时");
+        toast(v ? "Token 已保存" : "Token 已清除");
+      })
+      .catch((e) => set令牌结果("❌ 保存失败：" + (e && e.message ? e.message : String(e))))
+      .finally(() => set令牌busy(false));
   };
 
   const modes = ["markdown", "text", "image"];
@@ -2729,7 +2764,53 @@ function Settings({ api, toast }) {
               h("button", { type: "button", className: "xjl-btn xjl-primary", onClick: save, disabled: busy }, busy ? "保存中…" : "保存配置"),
               h("button", { type: "button", className: "xjl-btn", onClick: load, disabled: busy }, "重新读取")
             ),
-            h(ErrLine, { text: err })
+            h(ErrLine, { text: err }),
+            // ---- 3.1.8：GitHub API Token ----
+            h("h3", { style: { marginTop: 18 } }, "GitHub API Token"),
+            h(
+              "div",
+              { style: { display: "flex", gap: 8, alignItems: "center" } },
+              h("input", {
+                className: "xjl-input",
+                type: 令牌可见 ? "text" : "password",
+                placeholder: 令牌状态.已设置 ? "已保存 " + 令牌状态.展示 + "（留空不动，输入新的可替换）" : "ghp_… 粘贴你的 GitHub Token",
+                value: 令牌输入,
+                onChange: (e) => set令牌输入(e.target.value),
+                style: { flex: 1, minWidth: 0 }
+              }),
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "xjl-btn xjl-ghost xjl-sm",
+                  title: 令牌可见 ? "隐藏" : "显示",
+                  onClick: () => set令牌可见(!令牌可见)
+                },
+                令牌可见 ? "隐藏" : "显示"
+              ),
+              h(
+                "button",
+                { type: "button", className: "xjl-btn xjl-primary", onClick: saveToken, disabled: 令牌busy },
+                令牌busy ? "保存中…" : "保存"
+              ),
+              令牌状态.已设置
+                ? h(
+                    "button",
+                    { type: "button", className: "xjl-btn xjl-ghost xjl-sm", onClick: () => { set令牌输入(""); saveToken(); }, disabled: 令牌busy },
+                    "清除"
+                  )
+                : null
+            ),
+            h(
+              "p",
+              { className: "xjl-hint", style: { marginTop: 8 } },
+              "去 ",
+              h("a", { href: "https://github.com/settings/tokens", target: "_blank", rel: "noreferrer" }, "github.com/settings/tokens"),
+              " 新建 Token（需 public_repo / Read-only 权限）。",
+              h("br"),
+              "不填时匿名额度 60 次/小时；填了提升到 5000 次/小时。令牌只存本机、只用于查版本。"
+            ),
+            令牌结果 ? h("p", { className: "xjl-hint", style: { marginTop: 6 } }, 令牌结果) : null
           ),
           h(
             "div",
