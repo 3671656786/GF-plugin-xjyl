@@ -3,6 +3,10 @@
 data/tc/
 data/shu.jpg
 
+# 发布/测试过程中产生的 zip 一律不入库（3.1.7：之前测试残留的 _t.zip 被误提交，包体积多出 4MB）
+*.zip
+_t.zip
+
 # 依赖 / 临时运行环境
 node_modules/
 runtime-deps/
