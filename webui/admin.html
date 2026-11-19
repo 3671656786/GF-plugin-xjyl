@@ -685,11 +685,13 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
     { "键": "抗暴率", "类型": "百分比" },
     { "键": "闪击率", "类型": "百分比" },
     { "键": "反击率", "类型": "百分比" },
-    { "键": "反击伤害", "类型": "百分比" }
+    { "键": "反击伤害", "类型": "百分比" },
+    { "键": "反伤率", "类型": "百分比" },
+    { "键": "狂暴真伤", "类型": "百分比" },
+    { "键": "真实暴击", "类型": "百分比" }
   ];
   var ENTRY_ALIAS = { "攻击力": "攻击", "防御力": "防御", "生命": "血量上限", "血量": "血量" };
-  // 后端暂未交付这 10 条玩家词条；词条包缺失这些键时显示「敬请期待」徽章而不是 0.00%
-  var ENTRY_PENDING = { "吸血": 1, "精准打击": 1, "复活率": 1, "重伤": 1, "追击率": 1, "追击伤害": 1, "抗暴率": 1, "闪击率": 1, "反击率": 1, "反击伤害": 1 };
+  // 3.0.0 起词条已全面开放，后端全量下发，无「敬请期待」锁定词条。
 
   function entryValueOf(p, key) {
     var bag = p && p["词条"];
@@ -712,12 +714,9 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
     var cells = ENTRY_DEFS.map(function (it) {
       var raw = Number(bag[it["键"]]);
       var hasBag = isFinite(raw);
-      var pending = !hasBag && ENTRY_PENDING[it["键"]] === 1;
       var v = hasBag ? raw : entryValueOf(p, it["键"]);
-      var cls = "xjl-entry" + (it["类型"] === "百分比" ? " pct" : "") + (pending ? " pend" : hasBag && v > 0 ? "" : " zero");
-      var valHtml = pending
-        ? '<span class="soon">敬请期待</span>'
-        : esc(it["类型"] === "百分比" ? (isFinite(v) ? v.toFixed(2) + "%" : "0.00%") : fmt(Math.round(v)));
+      var cls = "xjl-entry" + (it["类型"] === "百分比" ? " pct" : "") + (hasBag && v > 0 ? "" : " zero");
+      var valHtml = esc(it["类型"] === "百分比" ? (isFinite(v) ? v.toFixed(2) + "%" : "0.00%") : fmt(Math.round(v)));
       return '<div class="' + cls + '"><span class="k">' + esc(it["键"]) + '</span><span class="v">' + valHtml + "</span></div>";
     }).join("");
     return (

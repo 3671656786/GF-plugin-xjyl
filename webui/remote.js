@@ -282,14 +282,16 @@ const ENTRY_DEFS = [
   { 键: "抗暴率", 类型: "百分比" },
   { 键: "闪击率", 类型: "百分比" },
   { 键: "反击率", 类型: "百分比" },
-  { 键: "反击伤害", 类型: "百分比" }
+  { 键: "反击伤害", 类型: "百分比" },
+  { 键: "反伤率", 类型: "百分比" },
+  { 键: "狂暴真伤", 类型: "百分比" },
+  { 键: "真实暴击", 类型: "百分比" }
 ];
 
 // 数值型词条在「词条」对象缺失该键时，退回玩家对象上的最终属性
 const ENTRY_ALIAS = { 攻击力: "攻击", 防御力: "防御", 生命: "血量上限", 血量: "血量" };
 
-// 后端暂未交付这 10 条玩家词条；词条包缺失这些键时显示「敬请期待」徽章而不是 0.00%
-const ENTRY_PENDING = new Set(["吸血", "精准打击", "复活率", "重伤", "追击率", "追击伤害", "抗暴率", "闪击率", "反击率", "反击伤害"]);
+// 3.0.0 起词条已全面开放，后端全量下发，无「敬请期待」锁定词条。
 
 function entryValue(player, key) {
   const p = player || {};
@@ -330,15 +332,14 @@ function EntryPanel({ player }) {
       ENTRY_DEFS.map((it) => {
         const raw = Number(bag[it.键]);
         const hasBag = Number.isFinite(raw);
-        const pending = !hasBag && ENTRY_PENDING.has(it.键);
         const v = hasBag ? raw : entryValue(player, it.键);
         const text = entryText(v, it.类型);
-        const cls = "xjl-entry" + (it.类型 === "百分比" ? " pct" : "") + (pending ? " pend" : hasBag && Number(v) > 0 ? "" : " zero");
+        const cls = "xjl-entry" + (it.类型 === "百分比" ? " pct" : "") + (hasBag && Number(v) > 0 ? "" : " zero");
         return h(
           "div",
-          { className: cls, key: it.键, title: it.键 + "：" + (pending ? "后端暂未开放，敬请期待" : text) },
+          { className: cls, key: it.键, title: it.键 + "：" + text },
           h("span", { className: "k" }, it.键),
-          h("span", { className: "v" }, pending ? h("span", { className: "soon" }, "敬请期待") : text)
+          h("span", { className: "v" }, text)
         );
       })
     ),
