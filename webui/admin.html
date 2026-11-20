@@ -166,30 +166,37 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
 .xjl-acct-title{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(100,116,139,.8);padding:0 12px 2px}
 @media (min-width:1180px){.xjl-players{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
 @media (max-width:860px){.xjyl-admin{flex-direction:column;height:auto;min-height:0;overflow:visible}.xjl-side{width:100%;flex:0 0 auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.55);position:sticky;top:0;z-index:20}.xjl-brand{padding:0 4px;flex:0 0 auto}.xjl-brand .xjl-mark{font-size:1.05rem}.xjl-brand small{display:none}.xjl-nav{flex-direction:row;flex:1;overflow-x:auto;gap:6px;padding-bottom:2px}.xjl-nav-item{padding:7px 11px;white-space:nowrap;flex:0 0 auto}.xjl-side-foot{display:none}.xjl-main{padding:12px 12px 24px;overflow:visible}.xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.xjl-page-title{font-size:1.15rem}.xjl-table.min,.xjl-table.wide{min-width:560px}.xjl-chart{grid-template-columns:34px minmax(0,1fr)}}
-/* 3.1.16：手机端增强 —— 表格改为容器内横向滚动（不再撑破页面）、触摸目标加大、禁掉横向溢出 */
+/* 3.1.17：手机端增强（重写）—— 显式铺满视口宽度，禁止任何层级把页面缩成一条。
+ * 3.1.16 的写法用 html,body{overflow-x:hidden} 会破坏 sticky，且没显式 width:100%，
+ * 在某些 WebView / devtools 设备模拟下 .xjyl-admin 只按内容收缩成窄条并居中。 */
 @media (max-width:600px){
-  html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
-  .xjyl-admin{max-width:100vw;overflow-x:hidden}
-  .xjl-main{padding:10px 10px 84px;max-width:100%;overflow-x:hidden}
+  html,body{margin:0;padding:0;width:100%;max-width:100%;-webkit-text-size-adjust:100%;overflow-x:clip}
+  #app{width:100%;height:auto;min-height:100vh}
+  .xjyl-admin{display:block;width:100%;max-width:100%;height:auto;min-height:100vh;overflow:visible}
+  .xjl-side{width:100%;max-width:100%;box-sizing:border-box}
+  .xjl-main{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:10px 10px 84px;overflow:visible}
+  .xjl-main>section{width:100%;max-width:100%;box-sizing:border-box}
   .xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .xjl-stat{padding:12px 10px}
   .xjl-stat b{font-size:1.15rem}
   .xjl-page-title{font-size:1.05rem;line-height:1.35}
-  /* 表格：外层可横向滑动，表格本身保留可读宽度，不再把整页撑宽 */
+  .xjl-page-sub{font-size:12px;line-height:1.5}
+  /* 表格：外层容器横向滑动，表格保留可读宽度，绝不把整页撑宽 */
   .xjl-table.min,.xjl-table.wide{min-width:0;width:100%;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .xjl-table table{min-width:520px}
-  [class*="table-wrap"],.xjl-tablebox{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  [class*="table-wrap"],.xjl-tablebox,.xjl-toolbar{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;width:100%;box-sizing:border-box}
   /* 按钮 / 输入：触摸目标不小于 40px，字号不小于 14px 防 iOS 自动放大 */
   .xjl-btn,.xjl-nav-item,button,select,input,textarea{min-height:40px;font-size:14px}
   .xjl-nav-item{padding:9px 12px}
-  input,select,textarea{max-width:100%}
+  input,select,textarea{max-width:100%;box-sizing:border-box}
+  .xjl-field,.xjl-toolbar label{max-width:100%;box-sizing:border-box}
   .xjl-chart{grid-template-columns:1fr;gap:6px}
-  .xjl-players{grid-template-columns:1fr}
+  .xjl-players{grid-template-columns:1fr;display:block}
+  .xjl-players>*{width:100%;max-width:100%;box-sizing:border-box;margin-bottom:10px}
   .xjl-entry-grid{grid-template-columns:1fr}
-  /* 弹窗 / 浮层：手机上占满宽度，避免内容挤出屏幕 */
+  /* 弹窗 / 浮层：手机上占满宽度 */
   .xjl-modal,.xjl-dialog,.xjl-panel{max-width:100vw;width:100%;box-sizing:border-box}
-  /* 长数字 / 地址强制换行，避免撑破卡片 */
-  .xjl-card,.xjl-panel,.xjl-stat{word-break:break-word;overflow-wrap:anywhere}
+  .xjl-card,.xjl-panel,.xjl-stat{word-break:break-word;overflow-wrap:anywhere;max-width:100%;box-sizing:border-box}
 }
 </style>
 </head>
