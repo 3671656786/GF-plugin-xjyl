@@ -7,7 +7,7 @@ const { useState, useEffect, useMemo, useRef, useCallback } = React;
 const STYLE_ID = "xjyl-admin-style";
 const DEFAULT_API_BASE = "/api/Plugin/ext/GF-plugin-xjyl";
 
-const CSS = `.xjyl-admin{--ink:#0b1220;--text:#0f172a;--heading:#1e293b;--muted:#64748b;--accent:#0f766e;--accent2:#0d9488;--soft:rgba(15,118,110,.12);--ok:#059669;--warn:#b45309;--fail:#dc2626;--card:rgba(255,255,255,.52);--mono:ui-monospace,Consolas,"Courier New",monospace;box-sizing:border-box;display:flex;height:100%;min-height:640px;overflow:hidden;color:var(--text);font-family:"Manrope","PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.5;background:radial-gradient(900px 520px at 6% -8%,rgba(45,212,191,.26),transparent 55%),radial-gradient(760px 460px at 98% 2%,rgba(56,189,248,.18),transparent 52%),radial-gradient(620px 420px at 72% 112%,rgba(165,243,252,.2),transparent 50%),linear-gradient(155deg,#e0f2fe,#ecfeff 42%,#e0f7f4)}
+const CSS = `.xjyl-admin{--ink:#0b1220;--text:#0f172a;--heading:#1e293b;--muted:#64748b;--accent:#0f766e;--accent2:#0d9488;--soft:rgba(15,118,110,.12);--ok:#059669;--warn:#b45309;--fail:#dc2626;--card:rgba(255,255,255,.52);--mono:ui-monospace,Consolas,"Courier New",monospace;box-sizing:border-box;display:flex;height:100%;min-height:640px;overflow:hidden;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.5;background:radial-gradient(900px 520px at 6% -8%,rgba(45,212,191,.26),transparent 55%),radial-gradient(760px 460px at 98% 2%,rgba(56,189,248,.18),transparent 52%),radial-gradient(620px 420px at 72% 112%,rgba(165,243,252,.2),transparent 50%),linear-gradient(155deg,#e0f2fe,#ecfeff 42%,#e0f7f4)}
 .xjyl-admin *,.xjyl-admin *::before,.xjyl-admin *::after{box-sizing:border-box}
 .xjyl-admin ::-webkit-scrollbar{width:8px;height:8px}
 .xjyl-admin ::-webkit-scrollbar-thumb{background:rgba(100,116,139,.28);border-radius:99px}
@@ -17,7 +17,9 @@ const CSS = `.xjyl-admin{--ink:#0b1220;--text:#0f172a;--heading:#1e293b;--muted:
 .xjl-brand{display:flex;flex-direction:column;gap:2px;padding:4px 10px 16px}
 .xjl-brand .xjl-mark{font-size:1.3rem;font-weight:800;line-height:1.1;background:linear-gradient(120deg,#0f766e 10%,#0d9488,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
 .xjl-brand small{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(71,85,105,.65)}
-.xjl-nav{display:flex;flex-direction:column;gap:3px}
+.xjl-nav{display:flex;flex-direction:column;gap:2px}
+.xjl-nav-group{margin:10px 10px 2px;padding:2px 4px;font-size:10px;font-weight:800;letter-spacing:.12em;color:rgba(71,85,105,.62);border-bottom:1px solid rgba(148,163,184,.28)}
+.xjl-nav-ico{flex:0 0 18px;width:18px;text-align:center;font-size:14px;line-height:1;opacity:.85}
 .xjl-nav-item{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:11px;border:1px solid transparent;background:transparent;color:rgba(51,65,85,.9);font-size:13px;font-weight:600;text-align:left;cursor:pointer;transition:background .18s,color .18s,border-color .18s}
 .xjl-nav-item:hover{background:rgba(255,255,255,.55);color:#0f172a}
 .xjl-nav-item.active{background:rgba(20,184,166,.18);border-color:rgba(45,212,191,.45);color:#0f766e;box-shadow:0 4px 14px rgba(20,184,166,.14)}
@@ -1676,16 +1678,19 @@ function Players({ api, meta, toast }) {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [sel, setSel] = useState(null);
+  const [page, setPage] = useState(1);          // 3.3.20：本地分页
+  const 每页 = 50;
 
   const load = useCallback(
     (kw, st, quiet) => {
       if (!quiet) setLoading(true);
       setErr("");
       return api
-        .get("/players", { q: kw, sort: st, limit: 200 })
+        .get("/players", { q: kw, sort: st, limit: 1000 })
         .then((d) => {
           setList((d && d.list) || []);
           setTotal(Number(d && d.total) || 0);
+          setPage(1);
         })
         .catch((e) => setErr(e && e.message ? e.message : String(e)))
         .finally(() => setLoading(false));
@@ -1753,7 +1758,7 @@ function Players({ api, meta, toast }) {
           sortOptions.map((s) => h("option", { key: s, value: s }, s))
         )
       ),
-      h("span", { className: "xjl-hint", style: { margin: 0 } }, "共 " + fmt(total) + " 位，展示前 200 位"),
+      h("span", { className: "xjl-hint", style: { margin: 0 } }, "共 " + fmt(total) + " 位" + (total > list.length ? "（最多载入 " + fmt(list.length) + " 位）" : "")),
       h("button", { type: "button", className: "xjl-btn xjl-ghost xjl-sm", onClick: () => load(q, sort, false), disabled: loading }, loading ? "加载中…" : "刷新")
     ),
     h(
@@ -1786,7 +1791,7 @@ function Players({ api, meta, toast }) {
                   h(
                     "tbody",
                     null,
-                    list.map((p) => {
+                    list.slice((page - 1) * 每页, page * 每页).map((p) => {
                       const sys = systemTitlesOf(p) || [];
                       return h(
                         "tr",
@@ -1864,6 +1869,16 @@ function Players({ api, meta, toast }) {
                   )
                 )
               ),
+        // 3.3.20：分页条（每页 50 位）
+        list.length > 每页
+          ? h(
+              "div",
+              { className: "xjl-pager", style: { display: "flex", alignItems: "center", gap: 8, justifyContent: "center", padding: "10px 0 2px", flexWrap: "wrap" } },
+              h("button", { type: "button", className: "xjl-btn xjl-sm", disabled: page <= 1, onClick: () => setPage((p) => Math.max(1, p - 1)) }, "上一页"),
+              h("span", { className: "xjl-hint" }, "第 " + page + " / " + Math.max(1, Math.ceil(list.length / 每页)) + " 页"),
+              h("button", { type: "button", className: "xjl-btn xjl-sm", disabled: page >= Math.ceil(list.length / 每页), onClick: () => setPage((p) => Math.min(Math.ceil(list.length / 每页), p + 1)) }, "下一页")
+            )
+          : null,
         h(ErrLine, { text: err })
       ),
       sel
@@ -3541,6 +3556,298 @@ function EntriesPanel({ api, toast }) {
   );
 }
 
+
+/* ============================================================
+ * 3.3.20 控制台升级：会话消息（/chats /msgs /send /recall）
+ * ============================================================ */
+function MessagesPanel({ api, toast }) {
+  const [dates, setDates] = useState([]);
+  const [date, setDate] = useState("");
+  const [chats, setChats] = useState([]);
+  const [scope, setScope] = useState("group");
+  const [chatId, setChatId] = useState("");
+  const [msgs, setMsgs] = useState([]);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
+  const loadDates = useCallback(() => {
+    api.get("/msg-dates").then((d) => {
+      const arr = (d && d.日期表) || [];
+      setDates(arr);
+      setDate((cur) => cur || (arr[0] || ""));
+    }).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  }, [api]);
+
+  const loadChats = useCallback((d) => {
+    if (!d) return;
+    setLoading(true); setErr("");
+    api.get("/chats", { date: d, limit: 100 }).then((r) => {
+      setChats((r && r.list) || []);
+    }).catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setLoading(false));
+  }, [api]);
+
+  useEffect(() => { loadDates(); }, [loadDates]);
+  useEffect(() => { if (date) loadChats(date); }, [date, loadChats]);
+
+  const loadMsgs = (sid) => {
+    setChatId(sid); setErr("");
+    api.get("/msgs", { date: date, scope: scope, id: sid, limit: 200 }).then((r) => {
+      setMsgs((r && r.list) || []);
+    }).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  };
+
+  const send = () => {
+    if (!chatId || !text.trim()) { toast && toast("请选会话并填内容"); return; }
+    setErr("");
+    api.post("/send", { scope: scope, id: chatId, text: text.trim() }).then(() => {
+      setText(""); toast && toast("已发送");
+      setTimeout(() => loadMsgs(chatId), 500);
+    }).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  };
+
+  const recall = (mid) => {
+    if (!chatId || !mid) return;
+    if (typeof window !== "undefined" && !window.confirm("确认撤回这条消息？")) return;
+    setErr("");
+    api.post("/recall", { scope: scope, id: chatId, mid: mid }).then(() => {
+      toast && toast("已撤回"); loadMsgs(chatId);
+    }).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  };
+
+  return h("div", null,
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍会话查询"),
+      h("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
+        h("span", { className: "xjl-hint" }, "日期"),
+        h("select", { className: "xjl-select", value: date, onChange: (e) => { setDate(e.target.value); setChatId(""); setMsgs([]); } },
+          (dates.length ? dates : [date].filter(Boolean)).map((d) => h("option", { key: d, value: d }, d))
+        ),
+        h("button", { type: "button", className: "xjl-btn xjl-sm", onClick: () => { loadDates(); if (date) loadChats(date); } }, "刷新")
+      )
+    ),
+    h("div", { className: "xjl-players", style: { gridTemplateColumns: "minmax(0,1fr) minmax(0,1.2fr)" } },
+      h("div", { className: "xjl-card", style: { padding: 12 } },
+        h("div", { className: "xjl-section-title", style: { marginBottom: 8 } }, "▍会话列表（" + chats.length + "）"),
+        loading ? h(Loading, null) : chats.length === 0 ? h(Empty, { text: "该日期暂无会话记录" }) :
+          h("div", { style: { maxHeight: "55vh", overflow: "auto" } },
+            chats.map((c, i) => {
+              const sc = c.scope || (c.群 ? "group" : "c2c");
+              const id = c.id || c.openid || c.群 || c.用户 || "";
+              const nm = c.名 || c.昵称 || c.群名 || (sc === "group" ? "群聊" : "私聊");
+              const active = chatId === id && scope === sc;
+              return h("button", {
+                key: i, type: "button",
+                className: "xjl-nav-item" + (active ? " active" : ""),
+                style: { width: "100%", marginBottom: 4, textAlign: "left" },
+                onClick: () => { setScope(sc); loadMsgs(id); }
+              }, (sc === "group" ? "👥 " : "💬 ") + nm + (c.条数 !== undefined ? "（" + c.条数 + "条）" : ""),
+                h("span", { className: "xjl-mono", style: { marginLeft: 6 } }, shortId(id)));
+            })
+          )
+      ),
+      h("div", { className: "xjl-card", style: { padding: 12, display: "flex", flexDirection: "column", minHeight: 320 } },
+        h("div", { className: "xjl-section-title", style: { marginBottom: 8 } }, "▍消息记录" + (chatId ? "（" + (scope === "group" ? "群" : "私聊") + " " + shortId(chatId) + "）" : "")),
+        h("div", { className: "xjl-hint", style: { marginBottom: 8 } }, "类型：" + (scope === "group" ? "群聊" : "私聊") + " · 点左侧会话切换"),
+        h("div", { style: { flex: 1, maxHeight: "42vh", overflow: "auto", border: "1px solid rgba(148,163,184,.25)", borderRadius: 10, padding: 8, background: "rgba(255,255,255,.4)" } },
+          !chatId ? h(Empty, { text: "请先选择左侧会话" }) : msgs.length === 0 ? h(Empty, { text: "该会话暂无消息" }) :
+            msgs.map((m, i) => h("div", { key: i, style: { borderBottom: "1px dashed rgba(148,163,184,.3)", padding: "6px 0" } },
+              h("div", { style: { display: "flex", justifyContent: "space-between", gap: 8 } },
+                h("span", { style: { fontWeight: 700 } }, m.昵称 || m.发送者 || (m.自己 ? "机器人" : "用户")),
+                h("span", { className: "xjl-mono" }, m.时间 || m.time || "")
+              ),
+              h("div", { style: { whiteSpace: "pre-wrap", wordBreak: "break-word" } }, m.内容 || m.content || m.text || ""),
+              m.消息ID || m.mid || m.id ? h("button", { type: "button", className: "xjl-btn xjl-sm xjl-ghost", style: { marginTop: 4 }, onClick: () => recall(m.消息ID || m.mid || m.id) }, "撤回") : null
+            ))
+        ),
+        h("div", { style: { display: "flex", gap: 8, marginTop: 10, alignItems: "center", flexWrap: "wrap" } },
+          h("input", { className: "xjl-input", style: { flex: 1, minWidth: 160 }, value: text, onChange: (e) => setText(e.target.value), placeholder: chatId ? "输入要发送的内容…" : "请先选择会话", disabled: !chatId, onKeyDown: (e) => { if (e.key === "Enter") send(); } }),
+          h("button", { type: "button", className: "xjl-btn xjl-primary", onClick: send, disabled: !chatId || !text.trim() }, "发送")
+        )
+      )
+    ),
+    h(ErrLine, { text: err })
+  );
+}
+
+/* ============================================================
+ * 3.3.20 控制台升级：系统管理（细分倍率/批量发奖/资金/股票/清理/开关/sharp）
+ * ============================================================ */
+function SystemPanel({ api, toast }) {
+  const [rates, setRates] = useState(null);
+  const [fund, setFund] = useState(null);
+  const [stocks, setStocks] = useState([]);
+  const [feature, setFeature] = useState(null);
+  const [sharp, setSharp] = useState(null);
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  // 批量发奖表单
+  const [筛, set筛] = useState("全部");
+  const [发星羽, set发星羽] = useState("");
+  const [发道具, set发道具] = useState("");
+  const [发数量, set发数量] = useState("1");
+  // 资金调整
+  const [资金额, set资金额] = useState("");
+  // 倍率草稿
+  const [率草, set率草] = useState({});
+  // 股票草稿
+  const [股草, set股草] = useState({});
+
+  const load = useCallback(() => {
+    setErr("");
+    api.get("/server/rates").then((d) => { setRates(d); const m = (d && d.倍率) || {}; set率草({ ...m }); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e)));
+    api.get("/economy").then((d) => setFund(d)).catch(() => {});
+    api.get("/stocks").then((d) => setStocks((d && d.股票) || [])).catch(() => {});
+    api.post("/server/feature", {}).then((d) => setFeature(d)).catch(() => {});
+    api.get("/sharp").then((d) => setSharp(d)).catch(() => {});
+  }, [api]);
+  useEffect(() => { load(); }, [load]);
+
+  const saveRates = () => {
+    setBusy(true); setErr("");
+    api.post("/server/rates", 率草).then((d) => { toast && toast(d && d.双倍活动 ? "已开启双倍活动" : "倍率已保存"); load(); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const grant = () => {
+    if (!发星羽 && !发道具) { toast && toast("星羽和道具至少填一项"); return; }
+    setBusy(true); setErr("");
+    api.post("/players/grant-bulk", { 筛选: 筛, 星羽: Number(发星羽) || 0, 道具: 发道具, 数量: Number(发数量) || 1 })
+      .then((d) => { toast && toast("已发放给 " + (d && d.人数 || 0) + " 人"); set发星羽(""); set发道具(""); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const adjustFund = () => {
+    const v = Number(资金额); if (!v) { toast && toast("请输入非零金额"); return; }
+    if (typeof window !== "undefined" && !window.confirm("确认" + (v > 0 ? "增加" : "扣除") + "世界资金 " + fmt(Math.abs(v)) + "？")) return;
+    setBusy(true); setErr("");
+    api.post("/economy/fund", { 金额: v }).then(() => { toast && toast("已调整"); set资金额(""); load(); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const saveStock = (it) => {
+    const d = 股草[it.代码] || {};
+    setBusy(true); setErr("");
+    api.post("/stocks/bounds", { 股: it.代码, 上限: d.上 === undefined ? it.上限 : Number(d.上) || 0, 下限: d.下 === undefined ? it.下限 : Number(d.下) || 0 })
+      .then(() => { toast && toast(it.名 + " 限额已保存"); load(); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const toggleFeature = () => {
+    const 现在 = !!(feature && feature.开关 && feature.开关["赌场"]);
+    setBusy(true); setErr("");
+    api.post("/server/feature", { 功能: "赌场", 开: !现在 })
+      .then(() => { toast && toast("赌场已" + (!现在 ? "开启" : "关闭")); load(); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const cleanup = (域) => {
+    if (typeof window !== "undefined" && !window.confirm("确认清理" + 域 + "？此操作不可撤销。")) return;
+    setBusy(true); setErr("");
+    api.post("/system/cleanup", { 域: 域 }).then(() => { toast && toast("已清理 " + 域); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+  const installSharp = () => {
+    setBusy(true); setErr("");
+    api.post("/sharp/install", {}).then(() => { toast && toast("安装指令已触发，请稍后刷新状态"); load(); })
+      .catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+
+  return h("div", null,
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍细分倍率（实际生效 = 称号 × 全服 × 细分）"),
+      rates && rates.倍率 ? h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(150px,1fr))", gap: 8 } },
+        Object.keys(rates.倍率).map((k) => h("label", { key: k, className: "xjl-field" },
+          k,
+          h("input", { className: "xjl-input", type: "number", step: "0.1", min: "0.5", max: "5", style: { width: 70, marginLeft: 6 }, value: 率草[k] === undefined ? rates.倍率[k] : 率草[k], onChange: (e) => set率草(Object.assign({}, 率草, { [k]: e.target.value })) })
+        ))
+      ) : h(Loading, null),
+      h("div", { style: { display: "flex", gap: 8, marginTop: 10, alignItems: "center", flexWrap: "wrap" } },
+        h("button", { type: "button", className: "xjl-btn xjl-primary", onClick: saveRates, disabled: busy || !rates }, "保存倍率"),
+        h("button", { type: "button", className: "xjl-btn", onClick: () => { const all = {}; Object.keys(rates ? rates.倍率 : {}).forEach((k) => all[k] = 2); set率草(all); }, disabled: !rates }, "填入双倍"),
+        h("span", { className: "xjl-hint" }, rates && rates.说明 ? rates.说明 : "")
+      )
+    ),
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍批量发奖励"),
+      h("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
+        h("span", { className: "xjl-hint" }, "筛选"),
+        h("select", { className: "xjl-select", value: 筛, onChange: (e) => set筛(e.target.value) },
+          ["全部", "等级:10", "信用:50"].map((s) => h("option", { key: s, value: s }, s))
+        ),
+        h("input", { className: "xjl-input", style: { width: 110 }, value: 发星羽, onChange: (e) => set发星羽(e.target.value), placeholder: "星羽数量" }),
+        h("input", { className: "xjl-input", style: { width: 120 }, value: 发道具, onChange: (e) => set发道具(e.target.value), placeholder: "道具名（可选）" }),
+        h("input", { className: "xjl-input", style: { width: 60 }, value: 发数量, onChange: (e) => set发数量(e.target.value), placeholder: "数量" }),
+        h("button", { type: "button", className: "xjl-btn xjl-danger", onClick: grant, disabled: busy }, "发放")
+      ),
+      h("div", { className: "xjl-hint", style: { marginTop: 6 } }, "筛选支持：全部 / 等级:10（≥10级）/ 信用:50（≥50分）")
+    ),
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍世界资金 / 全服开关"),
+      h("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
+        h("span", { className: "xjl-hint" }, "当前：" + fmt(fund && (fund.世界资金 !== undefined ? fund.世界资金 : fund.worldFund) || 0)),
+        h("input", { className: "xjl-input", style: { width: 130 }, value: 资金额, onChange: (e) => set资金额(e.target.value), placeholder: "±金额" }),
+        h("button", { type: "button", className: "xjl-btn", onClick: adjustFund, disabled: busy }, "调整"),
+        h("span", { style: { width: 16 } }),
+        h("span", { className: "xjl-hint" }, "赌场：" + ((feature && feature.开关 && feature.开关["赌场"]) ? "开" : "关")),
+        h("button", { type: "button", className: "xjl-btn", onClick: toggleFeature, disabled: busy }, "切换")
+      )
+    ),
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍股票上下限（0 = 不设限）"),
+      stocks.length === 0 ? h(Empty, { text: "暂无股票数据" }) :
+        h("div", { className: "xjl-table-wrap" },
+          h("table", { className: "xjl-table min" },
+            h("thead", null, h("tr", null, ["股票", "现价", "上限", "下限", ""].map((c) => h("th", { key: c }, c)))),
+            h("tbody", null, stocks.map((it) => h("tr", { key: it.代码 },
+              h("td", null, it.名 + "（" + it.代码 + "）" + (it.停牌中 ? " ⏸" : "")),
+              h("td", { className: "xjl-num" }, fmt(it.价)),
+              h("td", null, h("input", { className: "xjl-input", type: "number", style: { width: 80 }, value: (股草[it.代码] && 股草[it.代码].上 !== undefined) ? 股草[it.代码].上 : it.上限, onChange: (e) => set股草(Object.assign({}, 股草, { [it.代码]: Object.assign({}, 股草[it.代码], { 上: e.target.value }) })) })),
+              h("td", null, h("input", { className: "xjl-input", type: "number", style: { width: 80 }, value: (股草[it.代码] && 股草[it.代码].下 !== undefined) ? 股草[it.代码].下 : it.下限, onChange: (e) => set股草(Object.assign({}, 股草, { [it.代码]: Object.assign({}, 股草[it.代码], { 下: e.target.value }) })) })),
+              h("td", null, h("button", { type: "button", className: "xjl-btn xjl-sm", onClick: () => saveStock(it), disabled: busy }, "保存"))
+            )))
+          )
+        )
+    ),
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍数据清理 / 依赖"),
+      h("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } },
+        ["会话", "PVP", "旧基金"].map((d) => h("button", { key: d, type: "button", className: "xjl-btn xjl-danger xjl-sm", onClick: () => cleanup(d), disabled: busy }, "清理" + d)),
+        h("span", { style: { width: 16 } }),
+        h("span", { className: "xjl-hint" }, "图片组件：" + (sharp && sharp.可用 !== undefined ? (sharp.可用 ? "sharp 已装 ✓" : "sharp 未装（回退纯 CSS）") : "检测中")),
+        h("button", { type: "button", className: "xjl-btn xjl-sm", onClick: installSharp, disabled: busy }, "安装 sharp")
+      )
+    ),
+    h(ErrLine, { text: err })
+  );
+}
+
+/* ============================================================
+ * 3.3.20 控制台升级：指令一览（/commands）
+ * ============================================================ */
+function CommandsPanel({ api }) {
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    api.get("/commands").then(setData).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  }, [api]);
+  if (err) return h(ErrLine, { text: err });
+  if (!data) return h(Loading, null);
+  const 组 = (data && data.分组) || [];
+  const 统 = data && data.统计 || {};
+  return h("div", null,
+    h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
+      h("div", { className: "xjl-section-title" }, "▍指令一览（共 " + (统.条目数 || 0) + " 条 / " + (统.分组数 || 0) + " 组）"),
+      h("div", { className: "xjl-hint" }, data.说明 || "与游戏内「星甲完整指令菜单」一致")
+    ),
+    组.map((g, i) => h("div", { key: i, className: "xjl-card", style: { padding: 12, marginBottom: 10 } },
+      h("div", { className: "xjl-section-title", style: { marginBottom: 8 } }, g.组),
+      h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 6 } },
+        (g.条 || []).map((x, j) => h("div", { key: j, style: { display: "flex", gap: 8, alignItems: "baseline" } },
+          h("code", { className: "xjl-mono", style: { color: "#0f766e", fontWeight: 700, flex: "0 0 auto" } }, x[0]),
+          h("span", { className: "xjl-hint" }, x[1])
+        ))
+      )
+    ))
+  );
+}
+
 export default function Admin(props) {
   const safeProps = props || {};
   const apiBase = safeProps.apiBase ? String(safeProps.apiBase) : DEFAULT_API_BASE;
@@ -3626,18 +3933,29 @@ export default function Admin(props) {
     setMeta(null);
   }, []);
 
+  // 3.3.20：侧栏按域分组 + 图标（null 项为分组标题）
+  const ico = (s) => h("span", { className: "xjl-nav-ico", "aria-hidden": "true" }, s);
   const nav = [
-    ["overview", "概览"],
-    ["players", "玩家管理"],
-    ["rankings", "排行榜"],
-    ["dungeons", "副本数据"],
-    ["server", "全服倍率"],
-    ["economy", "玩法配置"],
-    ["activity", "活跃统计"],
-    ["farm", "农场总览"],
-    ["owners", "主人管理"],
-    ["logs", "日志与公告"],
-    ["settings", "设置"]
+    [null, "总览"],
+    ["overview", "概览", "◫"],
+    ["activity", "活跃统计", "◈"],
+    [null, "玩家域"],
+    ["players", "玩家管理", "☻"],
+    ["rankings", "排行榜", "♕"],
+    ["entries", "词条激活", "✦"],
+    [null, "玩法域"],
+    ["dungeons", "副本数据", "⚔"],
+    ["farm", "农场总览", "❀"],
+    ["economy", "玩法配置", "⚙"],
+    ["messages", "会话消息", "✉"],
+    [null, "系统域"],
+    ["server", "全服倍率", "◉"],
+    ["system", "系统管理", "✚"],
+    ["owners", "主人管理", "♛"],
+    ["logs", "日志与公告", "▤"],
+    ["commands", "指令一览", "≡"],
+    [null, "其他"],
+    ["settings", "设置", "⚒"]
   ];
 
   let body = null;
@@ -3651,6 +3969,10 @@ export default function Admin(props) {
   else if (view === "farm") body = h(FarmPanel, { api: api, toast: toast });
   else if (view === "owners") body = h(Owners, { api: api, meta: meta, toast: toast });
   else if (view === "logs") body = h(Logs, { api: api, toast: toast });
+  else if (view === "messages") body = h(MessagesPanel, { api: api, toast: toast });
+  else if (view === "system") body = h(SystemPanel, { api: api, toast: toast });
+  else if (view === "commands") body = h(CommandsPanel, { api: api });
+  else if (view === "entries") body = h(EntriesPanel, { api: api, toast: toast });
   else body = h(Settings, { api: api, toast: toast });
 
   // 未登录：只渲染登录页
@@ -3696,17 +4018,20 @@ export default function Admin(props) {
       h(
         "div",
         { className: "xjl-nav" },
-        nav.map((item) =>
-          h(
-            "button",
-            {
-              key: item[0],
-              type: "button",
-              className: "xjl-nav-item" + (view === item[0] ? " active" : ""),
-              onClick: () => setView(item[0])
-            },
-            item[1]
-          )
+        nav.map((item, i) =>
+          item[0] === null
+            ? h("div", { key: "g" + i, className: "xjl-nav-group" }, item[1])
+            : h(
+                "button",
+                {
+                  key: item[0],
+                  type: "button",
+                  className: "xjl-nav-item" + (view === item[0] ? " active" : ""),
+                  onClick: () => setView(item[0])
+                },
+                item[2] ? ico(item[2]) : null,
+                h("span", null, item[1])
+              )
         )
       ),
       h(
