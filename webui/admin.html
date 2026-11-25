@@ -173,7 +173,18 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
   html,body{margin:0;padding:0;width:100%;max-width:100%;-webkit-text-size-adjust:100%;overflow-x:clip}
   #app{width:100%;height:auto;min-height:100vh}
   .xjyl-admin{display:block;width:100%;max-width:100%;height:auto;min-height:100vh;overflow:visible}
-  .xjl-side{width:100%;max-width:100%;box-sizing:border-box}
+  /* 3.3.25 手机布局修复：父容器 display:block 后侧栏显式纵向堆叠（详见 remote.js 同名注释） */
+  .xjl-side{position:sticky;top:0;z-index:30;display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;max-width:100%;flex:0 0 auto;box-sizing:border-box;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.6)}
+  .xjl-brand{flex-direction:row;align-items:center;gap:8px;padding:2px 4px}
+  .xjl-brand .xjl-mark{font-size:1.05rem;white-space:nowrap}
+  .xjl-brand small{display:none}
+  .xjl-nav{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .xjl-nav::-webkit-scrollbar{display:none}
+  .xjl-nav-group{display:none}
+  .xjl-nav-item{flex:0 0 auto;width:auto;white-space:nowrap;padding:8px 12px}
+  .xjl-acct{margin-top:0;padding-top:0;border-top:0;flex-direction:row;align-items:center;gap:6px;flex-wrap:wrap}
+  .xjl-acct-title{display:none}
+  .xjl-side-foot{display:none}
   .xjl-main{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:10px 10px 84px;overflow:visible}
   .xjl-main>section{width:100%;max-width:100%;box-sizing:border-box}
   .xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
