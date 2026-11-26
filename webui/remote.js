@@ -3614,6 +3614,132 @@ function CommandsPanel({ api }) {
   );
 }
 
+/* ============================================================
+ * 3.3.27 插件在线更新（官方签名验证 + 风险确认）
+ * 与聊天端「星甲更新插件」共用同一套后端核心：
+ *   GET  /update/status  → 当前版本 / 缓存的版本与签名 / 下载源
+ *   POST /update/check   → 真查 GitHub（含 commit 验签）
+ *   POST /update/source  → 保存下载源偏好
+ *   POST /update/install → 签名门禁；无签名需 acceptRisk=true（409 先提示）
+ * ============================================================ */
+function PluginUpdate({ api, toast }) {
+  const [info, setInfo] = useState(null);
+  const [target, setTarget] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [风险, set风险] = useState(null);   // 409 回来的风险确认文案
+
+  const load = useCallback(() => {
+    setErr("");
+    api.get("/update/status").then(setInfo).catch((e) => setErr(e && e.message ? e.message : String(e)));
+  }, [api]);
+  useEffect(() => { load(); }, [load]);
+
+  // 更新进行中时轮询状态（重载前能拿到阶段）
+  useEffect(() => {
+    if (!busy) return undefined;
+    const id = setInterval(() => { api.get("/update/status").then(setInfo).catch(() => {}); }, 1500);
+    return () => clearInterval(id);
+  }, [busy, api]);
+
+  const check = () => {
+    setBusy(true); setErr("");
+    api.post("/update/check", { 版本: target.trim() }).then((d) => {
+      setInfo((p) => Object.assign({}, p || {}, d));
+      toast && toast(d.有更新 ? "发现新版本 v" + d.最新版本 : "已是最新版本");
+    }).catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+
+  const saveSource = (源) => {
+    setBusy(true); setErr("");
+    api.post("/update/source", { 源: 源 }).then(() => {
+      setInfo((p) => Object.assign({}, p || {}, { 源: 源 }));
+      toast && toast("下载源已切换");
+    }).catch((e) => setErr(e && e.message ? e.message : String(e))).finally(() => setBusy(false));
+  };
+
+  const install = (acceptRisk) => {
+    setBusy(true); setErr(""); set风险(null);
+    api.post("/update/install", { 版本: target.trim(), acceptRisk: !!acceptRisk }).then((d) => {
+      toast && toast("更新完成，已装到 v" + d.新版本 + "，正在重载…");
+      setInfo((p) => Object.assign({}, p || {}, { 当前版本: d.新版本, 最新版本: d.新版本, 有更新: false, 签名: d.签名 || (p && p.签名) }));
+    }).catch((e) => {
+      const m = e && e.message ? e.message : String(e);
+      // 服务端用 409 + 需要风险确认 标记「无签名，等用户确认」
+      if (/风险|签名/.test(m)) set风险(m);
+      else setErr(m);
+    }).finally(() => setBusy(false));
+  };
+
+  const 签名 = info && info.签名;
+  const 签名通过 = !!(签名 && 签名.官方已验证);
+  const 有更新 = !!(info && info.有更新);
+  const 源列表 = (info && info.源列表) || [];
+  const 源名 = 源列表.find((x) => x.键 === (info && info.源)) || {};
+
+  return h("div", null,
+    h(PageHead, { title: "插件自动更新", sub: "从 GitHub Release 检测新版本 · 校验官方签名 · 自动备份旧版本后覆盖安装。失败可自动回滚。" }),
+    h(
+      "div",
+      { className: "xjl-card", style: { padding: 14 } },
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" } },
+        h("h3", { style: { margin: 0 } }, "插件自动更新"),
+        h("span", { className: "xjl-badge " + (有更新 ? "warn" : "ok") }, 有更新 ? "发现新版本" : "已是最新")
+      ),
+      h("div", { className: "xjl-hint", style: { marginTop: 8 } },
+        "从 GitHub Release 检测新版本；下载前校验包内容，安装前自动备份，覆盖安装到插件目录。失败可手动回滚，运行数据不会丢失。"
+      ),
+      h(
+        "div",
+        { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 10, marginTop: 12 } },
+        h("div", { className: "xjl-stat" }, h("span", null, "当前版本"), h("b", null, "v" + ((info && info.当前版本) || "—"))),
+        h("div", { className: "xjl-stat" }, h("span", null, "最新版本"), h("b", null, "v" + ((info && info.最新版本) || "—"))),
+        h("div", { className: "xjl-stat" }, h("span", null, "下载源"), h("b", null, 源名.名 || (info && info.源) || "—"))
+      ),
+      // 签名状态：绿标 = 官方已验证；红标 = 未验证（仍可装，但需显式承担风险）
+      签名
+        ? h("div", { style: { marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" } },
+            h("span", { className: "xjl-badge " + (签名通过 ? "ok" : "fail") }, 签名通过 ? "官方签名已验证" : "签名未验证"),
+            h("span", { className: "xjl-hint" }, 签名.原因)
+          )
+        : null,
+      // 风险框：服务端 409 后弹出，必须显式确认才继续
+      风险
+        ? h("div", { className: "xjl-risk-box", style: { marginTop: 12, padding: 12, borderRadius: 10, border: "1.5px solid #dc2626", background: "rgba(254,226,226,.7)", color: "#991b1b" } },
+            h("strong", null, "⚠️ 官方签名验证未通过"),
+            h("p", { style: { margin: "6px 0", color: "#7f1d1d" } }, 风险),
+            h("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
+              h("button", { type: "button", className: "xjl-btn", onClick: () => set风险(null) }, "取消安装"),
+              h("button", { type: "button", className: "xjl-btn xjl-danger", onClick: () => install(true) }, "我已了解风险，继续安装")
+            )
+          )
+        : null,
+      h(ErrLine, { text: err }),
+      busy ? h("div", { className: "xjl-hint", style: { marginTop: 8 } }, "处理中，请稍候…") : null,
+      h(
+        "div",
+        { style: { display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginTop: 14 } },
+        h("button", { type: "button", className: "xjl-btn", onClick: check, disabled: busy }, busy ? "请稍候…" : "检查更新"),
+        h(
+          "select",
+          { className: "xjl-select", value: (info && info.源) || "", onChange: (e) => saveSource(e.target.value), disabled: busy },
+          (源列表.length ? 源列表 : [{ 键: "ghproxy", 名: "gh-proxy.com 加速" }]).map((x) =>
+            h("option", { key: x.键, value: x.键 }, x.名)
+          )
+        ),
+        h("input", { className: "xjl-input", type: "text", style: { width: 170 }, value: target, onChange: (e) => setTarget(e.target.value), placeholder: "指定版本（留空=最新）", disabled: busy }),
+        h("button", { type: "button", className: "xjl-btn xjl-primary", onClick: () => install(false), disabled: busy || !(有更新 || /^\d+\.\d+\.\d+/.test(target.trim())) }, busy ? "处理中…" : "下载并安装")
+      ),
+      h("div", { className: "xjl-hint", style: { marginTop: 10 } },
+        "发布页：",
+        h("a", { href: (info && info.发布页) || "https://github.com/3671656786/GF-plugin-xjyl/releases", target: "_blank", rel: "noopener noreferrer" },
+          (info && info.发布页) || "https://github.com/3671656786/GF-plugin-xjyl/releases")
+      )
+    )
+  );
+}
+
+
 export default function Admin(props) {
   const safeProps = props || {};
   const apiBase = safeProps.apiBase ? String(safeProps.apiBase) : DEFAULT_API_BASE;
@@ -3719,6 +3845,7 @@ export default function Admin(props) {
     ["owners", "主人管理", "♛"],
     ["logs", "日志与公告", "▤"],
     ["commands", "指令一览", "≡"],
+    ["pluginupdate", "更新插件", "⇧"],
     [null, "其他"],
     ["settings", "设置", "⚒"]
   ];
@@ -3737,6 +3864,7 @@ export default function Admin(props) {
   else if (view === "messages") body = h(MessagesPanel, { api: api, toast: toast });
   else if (view === "system") body = h(SystemPanel, { api: api, toast: toast });
   else if (view === "commands") body = h(CommandsPanel, { api: api });
+  else if (view === "pluginupdate") body = h(PluginUpdate, { api: api, toast: toast });
   else body = h(Settings, { api: api, toast: toast });
 
   // 未登录：只渲染登录页
