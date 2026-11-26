@@ -172,6 +172,32 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
 .xjl-check span.ok{background:rgba(5,150,105,.13);color:#047857}
 .xjl-acct{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(148,163,184,.32);display:flex;flex-direction:column;gap:4px}
 .xjl-acct-title{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(100,116,139,.8);padding:0 12px 2px}
+/* 3.3.28 聊天消息气泡 UI（参照 kzt 插件 im-* 风格，仅聊天展示，无 md 渲染） */
+.xjl-im-list{display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow:auto}
+.xjl-im-session{display:flex;align-items:center;gap:9px;width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.3);cursor:pointer;text-align:left;font:inherit;transition:background .18s,border-color .18s}
+.xjl-im-session:hover{background:rgba(255,255,255,.5)}
+.xjl-im-session.active{background:rgba(20,184,166,.16);border-color:rgba(45,212,191,.45)}
+.xjl-im-session-ico{flex:0 0 36px;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(20,184,166,.15);font-size:17px}
+.xjl-im-session-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.xjl-im-session-title{font-size:13px;font-weight:700;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xjl-im-session-meta{font-size:11px;color:#94a3b8;display:flex;gap:6px;align-items:center}
+.xjl-im-type{font-size:10px;font-weight:800;padding:1px 7px;border-radius:999px}
+.xjl-im-type.group{background:rgba(186,230,253,.75);color:#0369a1}
+.xjl-im-type.private{background:rgba(254,205,211,.75);color:#be123c}
+.xjl-im-msgs{flex:1;min-height:0;max-height:46vh;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px;border-radius:12px;border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.34)}
+.xjl-im-msg{display:flex;align-items:flex-start;gap:8px;max-width:82%;align-self:flex-start}
+.xjl-im-msg.out{flex-direction:row-reverse;align-self:flex-end}
+.xjl-im-av{flex:0 0 32px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0f766e;background:rgba(20,184,166,.2);border:1px solid rgba(255,255,255,.5)}
+.xjl-im-msg.out .xjl-im-av{background:rgba(13,148,136,.85);color:#fff}
+.xjl-im-msg-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.xjl-im-msg.out .xjl-im-msg-body{align-items:flex-end}
+.xjl-im-head{display:flex;gap:8px;align-items:baseline;font-size:11px;color:#64748b}
+.xjl-im-name{font-weight:700;color:#475569}
+.xjl-im-bubble{display:inline-block;max-width:100%;padding:9px 12px;border-radius:12px;border-top-left-radius:3px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.55);font-size:13px;line-height:1.55;color:#1e293b;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;box-shadow:0 3px 10px rgba(148,163,184,.14)}
+.xjl-im-msg.out .xjl-im-bubble{border-top-left-radius:12px;border-top-right-radius:3px;background:rgba(13,148,136,.9);border-color:rgba(255,255,255,.25);color:#fff;box-shadow:0 6px 16px rgba(13,148,136,.24)}
+.xjl-im-recall{border:0;background:transparent;color:#94a3b8;font-size:11px;cursor:pointer;padding:0}
+.xjl-im-recall:hover{color:#dc2626}
+@media (max-width:860px){.xjl-im-list{max-height:30vh}.xjl-im-msgs{max-height:40vh}.xjl-im-msg{max-width:92%}}
 @media (min-width:1180px){.xjl-players{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
 @media (max-width:860px){.xjyl-admin{flex-direction:column;height:auto;min-height:0;overflow:visible}.xjl-side{width:100%;flex:0 0 auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.55);position:sticky;top:0;z-index:20}.xjl-brand{padding:0 4px;flex:0 0 auto}.xjl-brand .xjl-mark{font-size:1.05rem}.xjl-brand small{display:none}.xjl-nav{flex-direction:row;flex:1;overflow-x:auto;gap:6px;padding-bottom:2px}.xjl-nav-item{padding:7px 11px;white-space:nowrap;flex:0 0 auto}.xjl-side-foot{display:none}.xjl-main{padding:12px 12px 24px;overflow:visible}.xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.xjl-page-title{font-size:1.15rem}.xjl-table.min,.xjl-table.wide{min-width:560px}.xjl-chart{grid-template-columns:34px minmax(0,1fr)}.xjl-entry-grid{grid-template-columns:minmax(0,1fr)}}
 /* 3.1.17：手机端增强（重写）—— 显式铺满视口宽度，禁止任何层级把页面缩成一条。
@@ -3396,7 +3422,7 @@ function MessagesPanel({ api, toast }) {
       h("div", { className: "xjl-card", style: { padding: 12 } },
         h("div", { className: "xjl-section-title", style: { marginBottom: 8 } }, "▍会话列表（" + chats.length + "）"),
         loading ? h(Loading, null) : chats.length === 0 ? h(Empty, { text: "该日期暂无会话记录" }) :
-          h("div", { style: { maxHeight: "55vh", overflow: "auto" } },
+          h("div", { className: "xjl-im-list" },
             chats.map((c, i) => {
               const sc = c.scope || (c.群 ? "group" : "c2c");
               const id = c.id || c.openid || c.群 || c.用户 || "";
@@ -3404,27 +3430,44 @@ function MessagesPanel({ api, toast }) {
               const active = chatId === id && scope === sc;
               return h("button", {
                 key: i, type: "button",
-                className: "xjl-nav-item" + (active ? " active" : ""),
-                style: { width: "100%", marginBottom: 4, textAlign: "left" },
+                className: "xjl-im-session" + (active ? " active" : ""),
                 onClick: () => { setScope(sc); loadMsgs(id); }
-              }, (sc === "group" ? "👥 " : "💬 ") + nm + (c.条数 !== undefined ? "（" + c.条数 + "条）" : ""),
-                h("span", { className: "xjl-mono", style: { marginLeft: 6 } }, shortId(id)));
+              },
+                h("span", { className: "xjl-im-session-ico" }, sc === "group" ? "👥" : "💬"),
+                h("span", { className: "xjl-im-session-body" },
+                  h("span", { className: "xjl-im-session-title" }, nm),
+                  h("span", { className: "xjl-im-session-meta" },
+                    h("span", { className: "xjl-im-type " + sc }, sc === "group" ? "群聊" : "私聊"),
+                    h("span", null, shortId(id)),
+                    c.条数 !== undefined ? h("span", null, c.条数 + " 条") : null
+                  )
+                )
+              );
             })
           )
       ),
       h("div", { className: "xjl-card", style: { padding: 12, display: "flex", flexDirection: "column", minHeight: 320 } },
         h("div", { className: "xjl-section-title", style: { marginBottom: 8 } }, "▍消息记录" + (chatId ? "（" + (scope === "group" ? "群" : "私聊") + " " + shortId(chatId) + "）" : "")),
-        h("div", { className: "xjl-hint", style: { marginBottom: 8 } }, "类型：" + (scope === "group" ? "群聊" : "私聊") + " · 点左侧会话切换"),
-        h("div", { style: { flex: 1, maxHeight: "42vh", overflow: "auto", border: "1px solid rgba(148,163,184,.25)", borderRadius: 10, padding: 8, background: "rgba(255,255,255,.4)" } },
+        h("div", { className: "xjl-im-msgs" },
           !chatId ? h(Empty, { text: "请先选择左侧会话" }) : msgs.length === 0 ? h(Empty, { text: "该会话暂无消息" }) :
-            msgs.map((m, i) => h("div", { key: i, style: { borderBottom: "1px dashed rgba(148,163,184,.3)", padding: "6px 0" } },
-              h("div", { style: { display: "flex", justifyContent: "space-between", gap: 8 } },
-                h("span", { style: { fontWeight: 700 } }, m.昵称 || m.发送者 || (m.自己 ? "机器人" : "用户")),
-                h("span", { className: "xjl-mono" }, m.时间 || m.time || "")
-              ),
-              h("div", { style: { whiteSpace: "pre-wrap", wordBreak: "break-word" } }, m.内容 || m.content || m.text || ""),
-              m.消息ID || m.mid || m.id ? h("button", { type: "button", className: "xjl-btn xjl-sm xjl-ghost", style: { marginTop: 4 }, onClick: () => recall(m.消息ID || m.mid || m.id) }, "撤回") : null
-            ))
+            msgs.map((m, i) => {
+              const out = m.方向 === "out" || m.自己 || m.out;
+              const nm = m.用户 || m.昵称 || m.发送者 || (out ? "机器人" : "用户");
+              const ts = Number(m.时间) || 0;
+              const tm = ts ? new Date(ts).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : (m.时间文本 || "");
+              const mid = m.消息id || m.mid || m.id;
+              return h("div", { key: i, className: "xjl-im-msg" + (out ? " out" : "") },
+                h("div", { className: "xjl-im-av" }, String(nm).slice(0, 1)),
+                h("div", { className: "xjl-im-msg-body" },
+                  h("div", { className: "xjl-im-head" },
+                    h("span", { className: "xjl-im-name" }, nm),
+                    tm ? h("span", null, tm) : null
+                  ),
+                  h("div", { className: "xjl-im-bubble" }, m.内容 || m.content || m.text || ""),
+                  mid ? h("button", { type: "button", className: "xjl-im-recall", onClick: () => recall(mid) }, "撤回") : null
+                )
+              );
+            })
         ),
         h("div", { style: { display: "flex", gap: 8, marginTop: 10, alignItems: "center", flexWrap: "wrap" } },
           h("input", { className: "xjl-input", style: { flex: 1, minWidth: 160 }, value: text, onChange: (e) => setText(e.target.value), placeholder: chatId ? "输入要发送的内容…" : "请先选择会话", disabled: !chatId, onKeyDown: (e) => { if (e.key === "Enter") send(); } }),
