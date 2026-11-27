@@ -1833,10 +1833,8 @@ function Players({ api, meta, toast }) {
           ? h(Loading, null)
           : list.length === 0
             ? h(Empty, { text: q ? "没有匹配的玩家" : "暂无玩家数据" })
-            : h(
-                "div",
-                { className: "xjl-table-wrap", style: { maxHeight: "62vh" } },
-                h(
+            : responsiveTable(
+h(
                   "table",
                   { className: "xjl-table min" },
                   h(
@@ -1929,8 +1927,7 @@ function Players({ api, meta, toast }) {
                       );
                     })
                   )
-                )
-              ),
+                ), {  }),
         // 3.3.20：分页条（每页 50 位）
         list.length > 每页
           ? h(
@@ -2142,10 +2139,8 @@ function Dungeons({ api, toast }) {
       hint ? h("p", { className: "xjl-hint", style: { margin: "0 4px 8px" } }, hint) : null,
       rows.length === 0
         ? h(Empty, { text: "暂无数据" })
-        : h(
-            "div",
-            { className: "xjl-table-wrap" },
-            h(
+        : responsiveTable(
+h(
               "table",
               { className: "xjl-table wide" },
               h(
@@ -2176,8 +2171,7 @@ function Dungeons({ api, toast }) {
                   )
                 )
               )
-            )
-          )
+            ), {  })
     );
   };
 
@@ -2216,10 +2210,8 @@ function TitlesPanel({ titles, err }) {
     err ? h(ErrLine, { text: err }) : null,
     list.length === 0
       ? h(Empty, { text: "暂无称号数据" })
-      : h(
-          "div",
-          { className: "xjl-table-wrap", style: { maxHeight: "56vh" } },
-          h(
+      : responsiveTable(
+h(
             "table",
             { className: "xjl-table min" },
             h(
@@ -2248,8 +2240,7 @@ function TitlesPanel({ titles, err }) {
                 )
               )
             )
-          )
-        )
+          ), {  })
   );
 }
 
@@ -2670,10 +2661,8 @@ function Logs({ api, toast }) {
           ? h(Loading, null)
           : logs.length === 0
             ? h(Empty, { text: "暂无管理日志" })
-            : h(
-                "div",
-                { className: "xjl-table-wrap", style: { maxHeight: "64vh" } },
-                h(
+            : responsiveTable(
+h(
                   "table",
                   { className: "xjl-table min" },
                   h("thead", null, h("tr", null, h("th", { style: { width: 132 } }, "时间"), h("th", { style: { width: 88 } }, "操作者"), h("th", null, "内容"))),
@@ -2690,8 +2679,7 @@ function Logs({ api, toast }) {
                       )
                     )
                   )
-                )
-              ),
+                ), {  }),
         h(ErrLine, { text: err })
       ),
       h(
@@ -3166,6 +3154,63 @@ function kvCard(title, rows, badge) {
 }
 
 // 通用表格：列名取自前几行数据的键并集；对象值显示 —；cap 控制行数上限
+/* 3.3.37 通用响应式表格：把已有的 table 虚拟节点自动派生一份卡片视图。
+ * 不改动各表格的业务 JSX —— 读取 thead 列名 + tbody 每行 td 的内容（保留原有
+ * React 节点/徽章/按钮），生成「仿仪表盘」的单列卡片流。桌面显示表格、≤860px 显示卡片。
+ * @param tableVNode h("table",...) 生成的虚拟节点
+ * @param opts { titleCol: 列名 -> 作为卡片标题; maxHeight: 表格高度 }
+ */
+function responsiveTable(tableVNode, opts) {
+  const o = opts || {};
+  const kids = (tableVNode && tableVNode.children) || [];
+  const thead = kids.find((x) => x && x.type === "thead");
+  const tbody = kids.find((x) => x && x.type === "tbody");
+  const headRow = thead && thead.children && thead.children[0];
+  const cols = ((headRow && headRow.children) || []).map((th, i) => {
+    const c = (th && th.children || []).find((x) => typeof x === "string");
+    return c || "列" + (i + 1);
+  });
+  const rows = ((tbody && tbody.children) || []).filter((x) => x && x.type === "tr");
+  // 标题列优先级：显式指定 > 常见名称列 > 第2列 > 第1列
+  const 名称列 = ["昵称", "称号", "股票", "名称", "名", "玩家", "角色", "用户"];
+  let titleIdx = cols.indexOf(o.titleCol) >= 0 ? cols.indexOf(o.titleCol) : -1;
+  if (titleIdx < 0) {
+    for (const n of 名称列) { const k = cols.indexOf(n); if (k >= 0) { titleIdx = k; break; } }
+  }
+  if (titleIdx < 0) titleIdx = Math.min(1, Math.max(0, cols.length - 1));
+  return h(
+    "div",
+    null,
+    h("div", { className: "xjl-table-wrap xjl-table-view", style: { maxHeight: o.maxHeight || "62vh" } }, tableVNode),
+    h(
+      "div",
+      { className: "xjl-cardlist" },
+      rows.map((tr, i) => {
+        const tds = (tr.children || []).filter((x) => x && x.type === "td");
+        const title = tds[titleIdx] && tds[titleIdx].children ? tds[titleIdx].children : "#" + (i + 1);
+        return h(
+          "div",
+          { className: "xjl-cardlist-item" + (i < 3 ? " top3" : ""), key: tr.key || i },
+          h("div", { className: "xjl-cardlist-title" },
+            h("span", { className: "xjl-cardlist-no" }, "#" + (i + 1)),
+            h("strong", null, title)),
+          h(
+            "div",
+            { className: "xjl-cardlist-grid" },
+            tds.map((td, j) =>
+              j === titleIdx ? null : h(
+                "div", { className: "xjl-cardlist-cell", key: j },
+                h("span", { className: "xjl-cardlist-k" }, cols[j] || "列" + (j + 1)),
+                h("span", { className: "xjl-cardlist-v" }, td.children)
+              )
+            ).filter(Boolean)
+          )
+        );
+      })
+    )
+  );
+}
+
 function genericTable(rows, cap) {
   const list = (Array.isArray(rows) ? rows : []).slice(0, cap || 20);
   if (!list.length) return h(Empty, { text: "暂无数据" });
@@ -3666,8 +3711,8 @@ function SystemPanel({ api, toast }) {
     h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
       h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍股票上下限（0 = 不设限）"),
       stocks.length === 0 ? h(Empty, { text: "暂无股票数据" }) :
-        h("div", { className: "xjl-table-wrap" },
-          h("table", { className: "xjl-table min" },
+        responsiveTable(
+h("table", { className: "xjl-table min" },
             h("thead", null, h("tr", null, ["股票", "现价", "上限", "下限", ""].map((c) => h("th", { key: c }, c)))),
             h("tbody", null, stocks.map((it) => h("tr", { key: it.代码 },
               h("td", null, it.名 + "（" + it.代码 + "）" + (it.停牌中 ? " ⏸" : "")),
@@ -3676,8 +3721,7 @@ function SystemPanel({ api, toast }) {
               h("td", null, h("input", { className: "xjl-input", type: "number", style: { width: 80 }, value: (股草[it.代码] && 股草[it.代码].下 !== undefined) ? 股草[it.代码].下 : it.下限, onChange: (e) => set股草(Object.assign({}, 股草, { [it.代码]: Object.assign({}, 股草[it.代码], { 下: e.target.value }) })) })),
               h("td", null, h("button", { type: "button", className: "xjl-btn xjl-sm", onClick: () => saveStock(it), disabled: busy }, "保存"))
             )))
-          )
-        )
+          ), { titleCol: "股票" })
     ),
     h("div", { className: "xjl-card", style: { padding: 14, marginBottom: 12 } },
       h("div", { className: "xjl-section-title", style: { marginBottom: 10 } }, "▍数据清理 / 依赖"),
