@@ -203,6 +203,15 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
 /* 3.1.17：手机端增强（重写）—— 显式铺满视口宽度，禁止任何层级把页面缩成一条。
  * 3.1.16 的写法用 html,body{overflow-x:hidden} 会破坏 sticky，且没显式 width:100%，
  * 在某些 WebView / devtools 设备模拟下 .xjyl-admin 只按内容收缩成窄条并居中。 */
+/* 3.3.35：触摸设备增强（手机横屏 / 平板 601-1024px）——
+ * 该区间多为触屏操作，补齐 WCAG AA 44px 触摸目标与 16px 输入字号（防 iOS Safari 自动放大）。
+ * 原规则只在 ≤600px 生效，导致 768/844/1024px 横竖屏按钮仍 auto 高、13px 字。 */
+@media (min-width:601px) and (max-width:1024px){
+  .xjl-btn,.xjl-nav-item,button,select{min-height:44px}
+  input,select,textarea{font-size:16px;max-width:100%;box-sizing:border-box}
+  .xjl-btn,.xjl-nav-item{font-size:14px}
+  .xjl-table.min,.xjl-table.wide{max-width:100%}
+}
 @media (max-width:600px){
   html,body{margin:0;padding:0;width:100%;max-width:100%;-webkit-text-size-adjust:100%;overflow-x:clip}
   #app{width:100%;height:auto;min-height:100vh}
