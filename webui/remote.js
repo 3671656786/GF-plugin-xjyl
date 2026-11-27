@@ -63,6 +63,18 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
 .xjl-chart-x span{text-align:center}
 .xjl-players{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
 .xjl-table-wrap{overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.44);max-height:100%}
+/* 3.3.36 表格→卡片响应式：桌面只显示表格，≤860px 只显示卡片列表（仿仪表盘单列卡片流） */
+.xjl-cardlist{display:none;flex-direction:column;gap:10px}
+.xjl-cardlist-item{padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(148,163,184,.14)}
+.xjl-cardlist-title{display:flex;align-items:center;gap:9px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(148,163,184,.2)}
+.xjl-cardlist-title strong{font-size:14px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xjl-cardlist-no{flex:0 0 auto;min-width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(20,184,166,.16);color:#0f766e;font-size:12px;font-weight:800;font-family:var(--mono)}
+.xjl-cardlist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.xjl-cardlist-cell{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.45)}
+.xjl-cardlist-k{font-size:11px;color:#64748b}
+.xjl-cardlist-v{font-size:14px;font-weight:700;color:#0f766e;font-variant-numeric:tabular-nums;word-break:break-word;overflow-wrap:anywhere}
+.xjl-cardlist-item.top3{border-color:rgba(45,212,191,.55);background:rgba(20,184,166,.1)}
+.xjl-cardlist-item.top3 .xjl-cardlist-no{background:#0f766e;color:#fff}
 .xjl-table{width:100%;border-collapse:collapse;font-size:13px}
 .xjl-table.min{min-width:660px}
 .xjl-table.wide{min-width:1180px}
@@ -199,7 +211,7 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
 .xjl-im-recall:hover{color:#dc2626}
 @media (max-width:860px){.xjl-im-list{max-height:30vh}.xjl-im-msgs{max-height:40vh}.xjl-im-msg{max-width:92%}}
 @media (min-width:1180px){.xjl-players{grid-template-columns:minmax(0,1.45fr) minmax(340px,1fr)}}
-@media (max-width:860px){.xjyl-admin{flex-direction:column;height:auto;min-height:0;overflow:visible}.xjl-side{width:100%;flex:0 0 auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.55);position:sticky;top:0;z-index:20}.xjl-brand{padding:0 4px;flex:0 0 auto}.xjl-brand .xjl-mark{font-size:1.05rem}.xjl-brand small{display:none}.xjl-nav{flex-direction:row;flex:1;overflow-x:auto;gap:6px;padding-bottom:2px}.xjl-nav-item{padding:7px 11px;white-space:nowrap;flex:0 0 auto}.xjl-side-foot{display:none}.xjl-main{padding:12px 12px 24px;overflow:visible}.xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.xjl-page-title{font-size:1.15rem}.xjl-table.min,.xjl-table.wide{min-width:560px}.xjl-chart{grid-template-columns:34px minmax(0,1fr)}.xjl-entry-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.xjyl-admin{flex-direction:column;height:auto;min-height:0;overflow:visible}.xjl-side{width:100%;flex:0 0 auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;overflow:visible;border-right:0;border-bottom:1px solid rgba(255,255,255,.55);position:sticky;top:0;z-index:20}.xjl-brand{padding:0 4px;flex:0 0 auto}.xjl-brand .xjl-mark{font-size:1.05rem}.xjl-brand small{display:none}.xjl-nav{flex-direction:row;flex:1;overflow-x:auto;gap:6px;padding-bottom:2px}.xjl-nav-item{padding:7px 11px;white-space:nowrap;flex:0 0 auto}.xjl-side-foot{display:none}.xjl-main{padding:12px 12px 24px;overflow:visible}.xjl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.xjl-page-title{font-size:1.15rem}.xjl-table.min,.xjl-table.wide{min-width:560px}.xjl-table-view{display:none}.xjl-cardlist{display:flex}.xjl-chart{grid-template-columns:34px minmax(0,1fr)}.xjl-entry-grid{grid-template-columns:minmax(0,1fr)}}
 /* 3.1.17：手机端增强（重写）—— 显式铺满视口宽度，禁止任何层级把页面缩成一条。
  * 3.1.16 的写法用 html,body{overflow-x:hidden} 会破坏 sticky，且没显式 width:100%，
  * 在某些 WebView / devtools 设备模拟下 .xjyl-admin 只按内容收缩成窄条并居中。 */
@@ -210,7 +222,7 @@ textarea.xjl-input{resize:vertical;line-height:1.55;width:100%}
   .xjl-btn,.xjl-nav-item,button,select{min-height:44px}
   input,select,textarea{font-size:16px;max-width:100%;box-sizing:border-box}
   .xjl-btn,.xjl-nav-item{font-size:14px}
-  .xjl-table.min,.xjl-table.wide{max-width:100%}
+  .xjl-table.min,.xjl-table.wide{min-width:0;max-width:100%}
 }
 @media (max-width:600px){
   html,body{margin:0;padding:0;width:100%;max-width:100%;-webkit-text-size-adjust:100%;overflow-x:clip}
@@ -2008,36 +2020,60 @@ function Rankings({ api, toast }) {
           ? h(Empty, { text: "暂无排行数据" })
           : h(
               "div",
-              { className: "xjl-table-wrap", style: { maxHeight: "68vh" } },
+              null,
+              /* 3.3.36：桌面表格 + 手机/平板卡片（仿仪表盘单列卡片流，防止排行榜窄屏挤压） */
               h(
-                "table",
-                { className: "xjl-table min" },
+                "div",
+                { className: "xjl-table-wrap xjl-table-view", style: { maxHeight: "68vh" } },
                 h(
-                  "thead",
-                  null,
+                  "table",
+                  { className: "xjl-table min" },
                   h(
-                    "tr",
+                    "thead",
                     null,
-                    h("th", { style: { width: 56 } }, "排名"),
-                    h("th", null, "昵称"),
-                    h("th", null, "编号"),
-                    cols.map((c) =>
-                      h("th", { key: c, style: { textAlign: "right" } }, c)
-                    )
-                  )
-                ),
-                h(
-                  "tbody",
-                  null,
-                  list.map((p, i) =>
                     h(
                       "tr",
-                      { key: p.id || i },
-                      h("td", { className: "xjl-num", style: { color: i < 3 ? "#0f766e" : undefined, fontWeight: i < 3 ? 700 : 400 } }, i + 1),
-                      h("td", { title: String(p.id || "") }, p.昵称 || "未命名"),
-                      h("td", { className: "xjl-mono" }, p.编号 === undefined ? "—" : p.编号),
+                      null,
+                      h("th", { style: { width: 56 } }, "排名"),
+                      h("th", null, "昵称"),
+                      h("th", null, "编号"),
                       cols.map((c) =>
-                        h("td", { key: c, className: "xjl-num", style: c === sort ? { color: "#0f766e", fontWeight: 700 } : undefined }, fmt(p[c]))
+                        h("th", { key: c, style: { textAlign: "right" } }, c)
+                      )
+                    )
+                  ),
+                  h(
+                    "tbody",
+                    null,
+                    list.map((p, i) =>
+                      h(
+                        "tr",
+                        { key: p.id || i },
+                        h("td", { className: "xjl-num", style: { color: i < 3 ? "#0f766e" : undefined, fontWeight: i < 3 ? 700 : 400 } }, i + 1),
+                        h("td", { title: String(p.id || "") }, p.昵称 || "未命名"),
+                        h("td", { className: "xjl-mono" }, p.编号 === undefined ? "—" : p.编号),
+                        cols.map((c) =>
+                          h("td", { key: c, className: "xjl-num", style: c === sort ? { color: "#0f766e", fontWeight: 700 } : undefined }, fmt(p[c]))
+                        )
+                      )
+                    )
+                  )
+                )
+              ),
+              h(
+                "div",
+                { className: "xjl-cardlist" },
+                list.map((p, i) =>
+                  h(
+                    "div",
+                    { className: "xjl-cardlist-item" + (i < 3 ? " top3" : ""), key: p.id || i },
+                    h("div", { className: "xjl-cardlist-title" },
+                      h("span", { className: "xjl-cardlist-no" }, "#" + (i + 1)),
+                      h("strong", null, p.昵称 || "未命名")),
+                    h("div", { className: "xjl-cardlist-grid" },
+                      h("div", { className: "xjl-cardlist-cell" }, h("span", { className: "xjl-cardlist-k" }, "编号"), h("span", { className: "xjl-cardlist-v" }, p.编号 === undefined ? "—" : p.编号)),
+                      cols.map((c) =>
+                        h("div", { className: "xjl-cardlist-cell", key: c }, h("span", { className: "xjl-cardlist-k" }, c), h("span", { className: "xjl-cardlist-v" }, fmt(p[c])))
                       )
                     )
                   )
@@ -3144,30 +3180,50 @@ function genericTable(rows, cap) {
     }
   }
   const isText = (k) => k === "昵称" || k === "名称" || k === "openid" || k === "id";
+  const 文本 = (v) => v === undefined || v === null || v === "" || typeof v === "object"
+    ? "—" : typeof v === "number" ? fmt(v) : String(v);
+  // 3.3.36：同一份数据渲染两套视图——桌面表格、手机/平板卡片（仿仪表盘单列卡片流）。
+  // CSS 按断点切换显示，避免表格在窄屏被压成难以阅读的细列。
   return h(
     "div",
-    { className: "xjl-table-wrap" },
+    null,
     h(
-      "table",
-      { className: "xjl-table min" },
-      h("thead", null, h("tr", null, cols.map((c) => h("th", { key: c, style: isText(c) ? undefined : { textAlign: "right" } }, c)))),
+      "div",
+      { className: "xjl-table-wrap xjl-table-view" },
       h(
-        "tbody",
-        null,
-        list.map((row, i) =>
+        "table",
+        { className: "xjl-table min" },
+        h("thead", null, h("tr", null, cols.map((c) => h("th", { key: c, style: isText(c) ? undefined : { textAlign: "right" } }, c)))),
+        h(
+          "tbody",
+          null,
+          list.map((row, i) =>
+            h(
+              "tr",
+              { key: i },
+              cols.map((c) => h("td", { key: c, className: isText(c) ? undefined : "xjl-num" }, 文本(row ? row[c] : undefined)))
+            )
+          )
+        )
+      )
+    ),
+    h(
+      "div",
+      { className: "xjl-cardlist" },
+      list.map((row, i) =>
+        h(
+          "div",
+          { className: "xjl-cardlist-item", key: i },
+          h("div", { className: "xjl-cardlist-title" }, h("span", { className: "xjl-cardlist-no" }, "#" + (i + 1)),
+            h("strong", null, 文本(row && (row.昵称 || row.名称 || row.玩家 || row.id)))),
           h(
-            "tr",
-            { key: i },
-            cols.map((c) => {
-              const v = row ? row[c] : undefined;
-              const text =
-                v === undefined || v === null || v === "" || typeof v === "object"
-                  ? "—"
-                  : typeof v === "number"
-                    ? fmt(v)
-                    : String(v);
-              return h("td", { key: c, className: isText(c) ? undefined : "xjl-num" }, text);
-            })
+            "div",
+            { className: "xjl-cardlist-grid" },
+            cols.filter((c) => !(c === "昵称" || c === "名称")).map((c) =>
+              h("div", { className: "xjl-cardlist-cell", key: c },
+                h("span", { className: "xjl-cardlist-k" }, c),
+                h("span", { className: "xjl-cardlist-v" }, 文本(row ? row[c] : undefined)))
+            )
           )
         )
       )
