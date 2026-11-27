@@ -3669,6 +3669,7 @@ function PluginUpdate({ api, toast }) {
   const [info, setInfo] = useState(null);
   const [target, setTarget] = useState("");
   const [busy, setBusy] = useState(false);
+  const [安装中, set安装中] = useState(false);   // 3.3.34：仅安装时轮询进度
   const [err, setErr] = useState("");
   const [风险, set风险] = useState(null);   // 409 回来的风险确认文案
 
@@ -3678,12 +3679,14 @@ function PluginUpdate({ api, toast }) {
   }, [api]);
   useEffect(() => { load(); }, [load]);
 
-  // 更新进行中时轮询状态（重载前能拿到阶段）
+  // 3.3.34：安装进行中时高频轮询进度（重载前能实时看到阶段推进）
   useEffect(() => {
-    if (!busy) return undefined;
-    const id = setInterval(() => { api.get("/update/status").then(setInfo).catch(() => {}); }, 1500);
+    if (!安装中) return undefined;
+    const 拉 = () => api.get("/update/status").then(setInfo).catch(() => {});
+    拉();
+    const id = setInterval(拉, 600);
     return () => clearInterval(id);
-  }, [busy, api]);
+  }, [安装中, api]);
 
   const check = () => {
     setBusy(true); setErr("");
@@ -3702,7 +3705,7 @@ function PluginUpdate({ api, toast }) {
   };
 
   const install = (acceptRisk) => {
-    setBusy(true); setErr(""); set风险(null);
+    setBusy(true); set安装中(true); setErr(""); set风险(null);
     api.post("/update/install", { 版本: target.trim(), acceptRisk: !!acceptRisk }).then((d) => {
       toast && toast("更新完成，已装到 v" + d.新版本 + "，正在重载…");
       setInfo((p) => Object.assign({}, p || {}, { 当前版本: d.新版本, 最新版本: d.新版本, 有更新: false, 签名: d.签名 || (p && p.签名) }));
@@ -3711,9 +3714,11 @@ function PluginUpdate({ api, toast }) {
       // 服务端用 409 + 需要风险确认 标记「无签名，等用户确认」
       if (/风险|签名/.test(m)) set风险(m);
       else setErr(m);
-    }).finally(() => setBusy(false));
+    }).finally(() => { setBusy(false); set安装中(false); });
   };
 
+  const 进度 = (info && info.进度) || null;
+  const 进度值 = 进度 ? Math.max(0, Math.min(100, Number(进度.进度) || 0)) : 0;
   const 签名 = info && info.签名;
   const 签名通过 = !!(签名 && 签名.官方已验证);
   const 有更新 = !!(info && info.有更新);
@@ -3758,7 +3763,19 @@ function PluginUpdate({ api, toast }) {
           )
         : null,
       h(ErrLine, { text: err }),
-      busy ? h("div", { className: "xjl-hint", style: { marginTop: 8 } }, "处理中，请稍候…") : null,
+      /* 3.3.34：安装中显示实时进度条（阶段 + 百分比 + 说明） */
+      安装中 && 进度
+        ? h("div", { style: { marginTop: 12, padding: "12px 14px", borderRadius: 12, background: "rgba(15,118,110,.08)", border: "1px solid rgba(15,118,110,.2)" } },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 8 } },
+              h("strong", { style: { color: "#0f766e" } }, 进度.阶段 || "准备中"),
+              h("span", { className: "xjl-mono", style: { color: "#0d9488", fontWeight: 800 } }, 进度值 + "%")
+            ),
+            h("div", { style: { height: 10, borderRadius: 99, background: "rgba(148,163,184,.25)", overflow: "hidden" } },
+              h("div", { style: { height: "100%", width: 进度值 + "%", borderRadius: 99, background: "linear-gradient(90deg,#0f766e,#2dd4bf)", transition: "width .4s ease" } })
+            ),
+            h("div", { className: "xjl-hint", style: { marginTop: 8 } }, 进度.说明 || "正在处理…")
+          )
+        : busy ? h("div", { className: "xjl-hint", style: { marginTop: 8 } }, "处理中，请稍候…") : null,
       h(
         "div",
         { style: { display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginTop: 14 } },
